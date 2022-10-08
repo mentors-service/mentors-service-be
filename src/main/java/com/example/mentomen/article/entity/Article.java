@@ -25,11 +25,9 @@ public class Article {
     @GeneratedValue(strategy = GenerationType.AUTO) // 자동 생성 전략
     private Long id;
     @Column
-    @NotBlank(message = "제목은 필수 입력 값입니다.")
     private String title;
 
     @Column
-    @NotBlank(message = "내용은 필수 입력 값입니다.")
     private String content;
 
     public static Article createArticle(ArticleDto dto) {

@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,16 +32,19 @@ public class ArticleApiController {
 
     //하나만
     @GetMapping("/{id}")
-    public ResponseEntity<Article> show(@PathVariable Long id) {
+    public ResponseEntity<ArticleDto> show(@PathVariable Long id) {
 
-        Article showed = articleService.show(id);
+        ArticleDto showed = articleService.show(id);
         return ResponseEntity.status(HttpStatus.OK).body(showed);
 
     }
     // POST
     @PostMapping
-    public ResponseEntity<ArticleDto> create(@Valid @RequestBody ArticleDto dto) {
+    public ResponseEntity<ArticleDto> create(@Valid @RequestBody ArticleDto dto, Errors errors) {
 
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
         ArticleDto createdDto  = articleService.create(dto);
         return ResponseEntity.status(HttpStatus.OK).body(createdDto);
 

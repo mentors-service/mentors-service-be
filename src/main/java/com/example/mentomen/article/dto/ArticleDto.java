@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
 @ToString
@@ -18,8 +19,10 @@ public class ArticleDto {
 
     private Long id;
 
+    @NotBlank(message = "내용은 필수 입력 값입니다.")
     private String title;
 
+    @NotBlank(message = "제목은 필수 입력 값입니다.")
     private String content;
 
     public static ArticleDto createArticleDto(Article article) {

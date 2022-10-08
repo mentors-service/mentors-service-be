@@ -36,9 +36,11 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public Article show(Long id) {
+    public ArticleDto show(Long id) {
 
-        return articleRepository.findById(id).orElse(null);
+        Article showed = articleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("게시글 조회 실패! 게시글이 없습니다."));
+        return ArticleDto.createArticleDto(showed);
     }
 
     public ArticleDto create(ArticleDto dto) {
