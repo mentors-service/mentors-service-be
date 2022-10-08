@@ -25,7 +25,7 @@ class ArticleServiceTest {
 
     @Test
     @DisplayName("게시글 등록 -> 제목 내용 다있을때")
-    void create1() {
+    void create() {
         // 예상
         String title = "가가가가";
         String content = "1111";
@@ -38,20 +38,6 @@ class ArticleServiceTest {
         assertEquals(expected.getContent(), dto.getContent());
     }
 
-    @Test
-    @DisplayName("게시글 등록 -> 제목만 있을때")
-    void create2() {
-        // 예상
-        String title = "가가가가";
-        String content = null;
-        ArticleDto dto = new ArticleDto(null, title, content);
-        Article expected = new Article(1L, title, content);
-        // 실제
-        ArticleDto articleDto = articleService.create(dto);
-        // 비교
-        assertEquals(expected.getTitle(), dto.getTitle());
-        assertEquals(expected.getContent(), dto.getContent());
-    }
 
     @Test
     @DisplayName("게시글 수정")
@@ -70,4 +56,19 @@ class ArticleServiceTest {
         assertEquals(expected.getContent(), dto2.getContent());
     }
 
+    @Test
+    @DisplayName("게시글 수정")
+    void delete() {
+        // 예상
+        String title = "가가가가";
+        String content = "1111";
+        ArticleDto dto = new ArticleDto(null, title, content);
+        ArticleDto dto2 = new ArticleDto(null, "나나나나", "2222");
+        ArticleDto articleDto = articleService.create(dto);
+        ArticleDto articleDto2 = articleService.create(dto2);
+        // 실제
+        ArticleDto deleted =articleService.delete(1L);
+        // 비교
+        assertEquals(deleted.toString(),articleDto.toString());
+    }
 }
