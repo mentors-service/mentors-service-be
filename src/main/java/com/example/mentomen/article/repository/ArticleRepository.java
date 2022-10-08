@@ -1,6 +1,6 @@
-package com.example.mentomen.repository;
+package com.example.mentomen.article.repository;
 
-import com.example.mentomen.entity.Article;
+import com.example.mentomen.article.entity.Article;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.ArrayList;

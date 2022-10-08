@@ -1,6 +1,6 @@
-package com.example.mentomen.article.dto;
+package com.example.mentomen.comment.dto;
 
-import com.example.mentomen.article.entity.Comment;
+import com.example.mentomen.comment.entity.Comment;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

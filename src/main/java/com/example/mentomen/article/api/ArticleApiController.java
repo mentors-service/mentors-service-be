@@ -1,24 +1,31 @@
-package com.example.mentomen.api;
+package com.example.mentomen.article.api;
 
-import com.example.mentomen.dto.ArticleDto;
-import com.example.mentomen.entity.Article;
-import com.example.mentomen.service.ArticleService;
+import com.example.mentomen.article.dto.ArticleDto;
+import com.example.mentomen.article.entity.Article;
+import com.example.mentomen.article.service.ArticleService;
+import com.example.mentomen.comment.dto.CommentDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
-@RequestMapping(value="/api/articles")
+//@RequestMapping(value="/api")
 @RestController
+@RequiredArgsConstructor
+@RequestMapping(value="/api/articles")
 public class ArticleApiController {
-    @Autowired
-    private ArticleService articleService;
+    private final ArticleService articleService;
+
     // 전체리스트
-    @GetMapping("/")
-    public ResponseEntity<List<Article>> index() {
-        List<Article> index = articleService.index();
-        return ResponseEntity.status(HttpStatus.OK).body(index);
+    @GetMapping
+    public ResponseEntity<List<ArticleDto>> articles() {
+
+        List<ArticleDto> dtos = articleService.articles();
+        return ResponseEntity.status(HttpStatus.OK).body(dtos);
+
     }
 
     //하나만
@@ -27,28 +34,32 @@ public class ArticleApiController {
 
         Article showed = articleService.show(id);
         return ResponseEntity.status(HttpStatus.OK).body(showed);
+
     }
     // POST
-    @PostMapping("/")
-    public ResponseEntity<Article> create(@RequestBody ArticleDto dto) {
-        Article created  = articleService.create(dto);
-        return ResponseEntity.status(HttpStatus.OK).body(created);
+    @PostMapping
+    public ResponseEntity<ArticleDto> create(@Valid @RequestBody ArticleDto dto) {
+
+        ArticleDto createdDto  = articleService.create(dto);
+        return ResponseEntity.status(HttpStatus.OK).body(createdDto);
+
     }
 
     // PATCH
     @PatchMapping("/{id}")
-    public ResponseEntity<Article> update(@PathVariable Long id,
+    public ResponseEntity<ArticleDto> update(@PathVariable Long id,
                                           @RequestBody ArticleDto dto) {
-        Article updated = articleService.update(id, dto);
-        return ResponseEntity.status(HttpStatus.OK).body(updated);
+
+        ArticleDto updatedDto = articleService.update(id, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedDto);
     }
+
     // DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<Article> delete(@PathVariable Long id) {
+    public ResponseEntity<ArticleDto> delete(@PathVariable Long id) {
 
-        Article deleted = articleService.delete(id);
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        ArticleDto deletedDto = articleService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).body(deletedDto);
     }
 
 }

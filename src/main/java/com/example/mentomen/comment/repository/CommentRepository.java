@@ -1,6 +1,6 @@
-package com.example.mentomen.article.repository;
+package com.example.mentomen.comment.repository;
 
-import com.example.mentomen.article.entity.Comment;
+import com.example.mentomen.comment.entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 

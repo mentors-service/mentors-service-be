@@ -1,6 +1,8 @@
 package com.example.mentomen.service;
 
-import com.example.mentomen.entity.Article;
+import com.example.mentomen.article.dto.ArticleDto;
+import com.example.mentomen.article.entity.Article;
+import com.example.mentomen.article.service.ArticleService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +24,50 @@ class ArticleServiceTest {
     ArticleService articleService;
 
     @Test
-    @DisplayName("article list")
-    void index() {
+    @DisplayName("게시글 등록 -> 제목 내용 다있을때")
+    void create1() {
         // 예상
-        Article a = new Article(1L, "가가가가", "1111");
-        Article b = new Article(2L, "나나나나", "2222");
-        Article c = new Article(3L, "다다다다", "3333");
-        List<Article> expected = new ArrayList<Article>(Arrays.asList(a, b, c));
+        String title = "가가가가";
+        String content = "1111";
+        ArticleDto dto = new ArticleDto(null, title, content);
+        Article expected = new Article(1L, title, content);
         // 실제
-        List<Article> articles = articleService.index();
-        // 검증
-        assertEquals(expected.toString(),articles.toString());
+        ArticleDto articleDto = articleService.create(dto);
+        // 비교
+        assertEquals(expected.getTitle(), dto.getTitle());
+        assertEquals(expected.getContent(), dto.getContent());
     }
+
+    @Test
+    @DisplayName("게시글 등록 -> 제목만 있을때")
+    void create2() {
+        // 예상
+        String title = "가가가가";
+        String content = null;
+        ArticleDto dto = new ArticleDto(null, title, content);
+        Article expected = new Article(1L, title, content);
+        // 실제
+        ArticleDto articleDto = articleService.create(dto);
+        // 비교
+        assertEquals(expected.getTitle(), dto.getTitle());
+        assertEquals(expected.getContent(), dto.getContent());
+    }
+
+    @Test
+    @DisplayName("게시글 수정")
+    void update() {
+        // 예상
+        String title = "가가가가";
+        String content = "1111";
+        ArticleDto dto = new ArticleDto(null, title, content);
+        ArticleDto dto2 = new ArticleDto(null, "수정됨", "2222");
+        ArticleDto articleDto = articleService.create(dto);
+        ArticleDto articleDto2 = articleService.create(dto2);
+        // 실제
+        ArticleDto expected=articleService.update(1L,dto2);
+        // 비교
+        assertEquals(expected.getTitle(), dto2.getTitle());
+        assertEquals(expected.getContent(), dto2.getContent());
+    }
+
 }

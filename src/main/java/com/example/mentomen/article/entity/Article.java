@@ -1,13 +1,17 @@
-package com.example.mentomen.entity;
+package com.example.mentomen.article.entity;
 
+import com.example.mentomen.article.dto.ArticleDto;
+import com.example.mentomen.comment.dto.CommentDto;
+import com.example.mentomen.comment.entity.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,22 +24,32 @@ public class Article {
     @Column(name="article_id")
     @GeneratedValue(strategy = GenerationType.AUTO) // 자동 생성 전략
     private Long id;
-
     @Column
+    @NotBlank(message = "제목은 필수 입력 값입니다.")
     private String title;
 
     @Column
+    @NotBlank(message = "내용은 필수 입력 값입니다.")
     private String content;
 
-    public Article(String title, String content) {
-        this.title = title;
-        this.content = content;
+    public static Article createArticle(ArticleDto dto) {
+        // 예외 발생
+        if (dto.getId() != null)
+            throw new IllegalArgumentException("개시글 생성 실패! 개시글의 id가 없어야 합니다.");
+        // 엔티티 생성 및 반환
+        return new Article(
+                dto.getId(),
+                dto.getTitle(),
+                dto.getContent()
+        );
     }
-    public void patch(Article article) {
-        if (article.title != null)
-            this.title = article.title;
-        if (article.content != null)
-            this.content = article.content;
+
+    public void patch(ArticleDto dto) {
+        if (dto.getTitle() != null)
+            this.title = dto.getTitle();
+        if (dto.getContent() != null)
+            this.content = dto.getContent();
     }
+
 
 }

@@ -1,7 +1,7 @@
-package com.example.mentomen.article.api;
+package com.example.mentomen.comment.api;
 
-import com.example.mentomen.article.dto.CommentDto;
-import com.example.mentomen.article.service.CommentService;
+import com.example.mentomen.comment.dto.CommentDto;
+import com.example.mentomen.comment.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +42,6 @@ public class CommentApiController {
     }
 
     //댓글 삭제
-
     @DeleteMapping("/api/comments/{id}")
     public ResponseEntity<CommentDto> delete(@PathVariable Long id) {
         // 서비스에게 위임
