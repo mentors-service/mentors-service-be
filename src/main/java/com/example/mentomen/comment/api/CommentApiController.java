@@ -1,7 +1,7 @@
-package com.example.mentomen.api;
+package com.example.mentomen.article.api;
 
-import com.example.mentomen.dto.CommentDto;
-import com.example.mentomen.service.CommentService;
+import com.example.mentomen.article.dto.CommentDto;
+import com.example.mentomen.article.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

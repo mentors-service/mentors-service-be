@@ -1,6 +1,6 @@
-package com.example.mentomen.entity;
+package com.example.mentomen.article.entity;
 
-import com.example.mentomen.dto.CommentDto;
+import com.example.mentomen.article.dto.CommentDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

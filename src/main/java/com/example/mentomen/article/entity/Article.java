@@ -8,13 +8,13 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Entity
 @Getter
 public class Article {
+
 
     @Id
     @Column(name="article_id")
@@ -27,14 +27,15 @@ public class Article {
     @Column
     private String content;
 
-//    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
-//    private List<Comment> comments = new ArrayList<>();
-//
-
+    public Article(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
     public void patch(Article article) {
         if (article.title != null)
             this.title = article.title;
         if (article.content != null)
             this.content = article.content;
     }
+
 }

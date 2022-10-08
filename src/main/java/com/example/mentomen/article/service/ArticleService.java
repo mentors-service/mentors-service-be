@@ -1,46 +1,47 @@
 package com.example.mentomen.service;
 
-import com.example.mentomen.dto.ArticleForm;
+import com.example.mentomen.dto.ArticleDto;
 import com.example.mentomen.dto.CommentDto;
 import com.example.mentomen.entity.Article;
-import com.example.mentomen.entity.Comment;
 import com.example.mentomen.repository.ArticleRepository;
 import com.example.mentomen.repository.CommentRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class ArticleService {
 
-    @Autowired
-    private ArticleRepository articleRepository;
+    private final ArticleRepository articleRepository;
+    private final CommentRepository commentRepository;
+    private final CommentService commentService;
 
-    @Autowired
-    private CommentRepository commentRepository;
-    @Autowired
-    private CommentService commentService;
+    @Transactional(readOnly = true)
     public List<Article> index() {
+
         return articleRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Article show(Long id) {
 
         return articleRepository.findById(id).orElse(null);
     }
 
-    public Article create(ArticleForm dto) {
+    public Article create(ArticleDto dto) {
 
         Article article = dto.toEntity();
-
         return articleRepository.save(article);
     }
-    public Article update(Long id, ArticleForm dto) {
+    public Article update(Long id, ArticleDto dto) {
         // 1: DTO -> 엔티티
         Article article = dto.toEntity();
         log.info("id: {}, article: {}", id, article.toString());

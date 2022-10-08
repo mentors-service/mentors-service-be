@@ -1,66 +1,54 @@
 package com.example.mentomen.api;
 
-import com.example.mentomen.dto.ArticleForm;
-import com.example.mentomen.dto.CommentDto;
+import com.example.mentomen.dto.ArticleDto;
 import com.example.mentomen.entity.Article;
 import com.example.mentomen.service.ArticleService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@Slf4j
+@RequestMapping(value="/api/articles")
 @RestController
 public class ArticleApiController {
     @Autowired
     private ArticleService articleService;
     // 전체리스트
-    @GetMapping("/api/articles")
+    @GetMapping("/")
     public ResponseEntity<List<Article>> index() {
         List<Article> index = articleService.index();
         return ResponseEntity.status(HttpStatus.OK).body(index);
     }
 
     //하나만
-    @GetMapping("/api/articles/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Article> show(@PathVariable Long id) {
 
         Article showed = articleService.show(id);
-        return (showed != null) ?
-                ResponseEntity.status(HttpStatus.OK).body(showed) :
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.OK).body(showed);
     }
     // POST
-    @PostMapping("/api/articles")
-    public ResponseEntity<Article> create(@RequestBody ArticleForm dto) {
+    @PostMapping("/")
+    public ResponseEntity<Article> create(@RequestBody ArticleDto dto) {
         Article created  = articleService.create(dto);
-        return (created != null) ?
-                ResponseEntity.status(HttpStatus.OK).body(created) :
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.OK).body(created);
     }
 
     // PATCH
-    @PatchMapping("/api/articles/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<Article> update(@PathVariable Long id,
-                                          @RequestBody ArticleForm dto) {
+                                          @RequestBody ArticleDto dto) {
         Article updated = articleService.update(id, dto);
-        return (updated != null) ?
-                ResponseEntity.status(HttpStatus.OK).body(updated):
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.OK).body(updated);
     }
     // DELETE
-    @DeleteMapping("/api/articles/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Article> delete(@PathVariable Long id) {
 
         Article deleted = articleService.delete(id);
 
-        return (deleted != null) ?
-                ResponseEntity.status(HttpStatus.NO_CONTENT).build() :
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-
-
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

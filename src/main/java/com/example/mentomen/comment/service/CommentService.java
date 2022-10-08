@@ -1,10 +1,10 @@
-package com.example.mentomen.service;
+package com.example.mentomen.article.service;
 
-import com.example.mentomen.dto.CommentDto;
-import com.example.mentomen.entity.Article;
-import com.example.mentomen.entity.Comment;
-import com.example.mentomen.repository.ArticleRepository;
-import com.example.mentomen.repository.CommentRepository;
+import com.example.mentomen.article.dto.CommentDto;
+import com.example.mentomen.article.entity.Article;
+import com.example.mentomen.article.entity.Comment;
+import com.example.mentomen.article.repository.ArticleRepository;
+import com.example.mentomen.article.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
