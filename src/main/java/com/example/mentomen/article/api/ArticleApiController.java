@@ -35,7 +35,7 @@ public class ArticleApiController {
     }
 
     @PatchMapping("/{id}")
-    public Long update(@PathVariable Long id,
+    public Long update(@Valid@ PathVariable Long id,
                        @RequestBody ArticleRequestDto requestDto) {
 
         return articleService.update(id, requestDto);
