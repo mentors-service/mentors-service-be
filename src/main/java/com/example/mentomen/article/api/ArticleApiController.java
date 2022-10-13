@@ -4,6 +4,8 @@ import com.example.mentomen.article.dto.ArticleRequestDto;
 import com.example.mentomen.article.dto.ArticleResponseDto;
 import com.example.mentomen.article.service.ArticleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,20 +33,21 @@ public class ArticleApiController {
     @PostMapping
     public Long save(@Valid @RequestBody ArticleRequestDto requestDto) {
 
+       // ResponseEntity.status(HttpStatus.OK).body(showed);
         return articleService.save(requestDto);
     }
 
     @PatchMapping("/{id}")
-    public Long update(@Valid@ PathVariable Long id,
+    public Long update(@Valid @PathVariable Long id,
                        @RequestBody ArticleRequestDto requestDto) {
 
         return articleService.update(id, requestDto);
     }
 
     @DeleteMapping("/{id}")
-    public Long delete(@PathVariable Long id) {
+    public void delete(@PathVariable Long id) {
 
         articleService.delete(id);
-        return id;
+        //return id;
     }
 }
