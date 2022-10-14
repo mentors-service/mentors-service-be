@@ -20,11 +20,12 @@ public class SocialDto {
         this.imageUrl = imageUrl;
     }
 
-    public UserEntity toEntity() {
+    public UserEntity toEntity(String password) {
         return UserEntity.builder()
                 .email(email)
                 .name(name)
                 .imageUrl(imageUrl)
+                .password(password)
                 .build();
     }
 

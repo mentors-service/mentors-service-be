@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -23,12 +26,25 @@ public class UserEntity {
     @Column
     public String imageUrl;
 
+    @Column
+    public String password;
+    @Column
+    private String roles;
+
 
     @Builder
     public UserEntity(String email, String name, String imageUrl,String password) {
         this.email = email;
         this.name = name;
         this.imageUrl = imageUrl;
+        this.password = password;
+    }
+
+    public List<String> getRoleList(){
+        if(this.roles.length() > 0){
+            return Arrays.asList(this.roles.split(","));
+        }
+        return new ArrayList<>();
     }
 
 }
