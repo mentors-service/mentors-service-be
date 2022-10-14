@@ -6,6 +6,9 @@ import com.example.mentomen.article.dto.SocialDto;
 import com.example.mentomen.article.entity.UserEntity;
 import com.example.mentomen.article.repository.UserRepository;
 import com.example.mentomen.article.service.KakaoService;
+import io.jsonwebtoken.Header;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
@@ -29,7 +32,7 @@ public class UserController {
     private final Environment env;
     @GetMapping("/callback")
     @ResponseBody
-    public ResponseEntity KaKaoCallback(String code, HttpServletResponse response){
+    public String  KaKaoCallback(String code, HttpServletResponse response){
 
         SocialDto socialDto = kakaoService.KaKaoCallback2(code);
 
@@ -42,18 +45,25 @@ public class UserController {
             user=socialDto.toEntity(password);
             userRepository.save(user);
         }
-        // JWT 토큰 생성
-        String token = JWT.create()
-                .withSubject("cos토큰")
-                .withExpiresAt(new Date(System.currentTimeMillis() + 60000*10))
-                .withClaim("email", socialDto.getEmail())
-                .sign(Algorithm.HMAC512("cos"));
-         //JWT 토큰 헤더에 담아 전달
-        response.addHeader(env.getProperty("token.header"), env.getProperty("token.prefix") + token);
+//        // JWT 토큰 생성
+//        String token = JWT.create()
+//                .withSubject("cos토큰")
+//                .withExpiresAt(new Date(System.currentTimeMillis() + 60000*10))
+//                .withClaim("email", socialDto.getEmail())
+//                .sign(Algorithm.HMAC512("cos"));
+//         //JWT 토큰 헤더에 담아 전달
+//        response.addHeader(env.getProperty("token.header"), env.getProperty("token.prefix") + token);
 
        // System.out.println("response: "+response);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return Jwts.builder()
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE) // (1)
+                .setIssuer("fresh") // (2)
+                .setExpiration(new Date(System.currentTimeMillis() + 60000*10)) // (4)
+                .claim("email", socialDto.getEmail()) // (5)
+                .signWith(SignatureAlgorithm.HS256, "secret") // (6)
+                .compact();
+        //return new ResponseEntity(HttpStatus.OK);
     }
 
 }
