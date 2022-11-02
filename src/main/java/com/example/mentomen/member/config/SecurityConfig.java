@@ -4,6 +4,7 @@ import com.example.mentomen.member.config.jwt.JwtCommonAuthorizationFilter;
 import com.example.mentomen.member.config.jwt.JwtTokenProvider;
 import com.example.mentomen.member.config.oauth.PrincipalOauth2UserService;
 import com.example.mentomen.member.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -29,19 +30,23 @@ import java.io.IOException;
 @EnableWebSecurity // 스프링 시큐리티 필터가 스프링 필터체인에 등록됨
 //secured 어노테이션 활성화
 //preAuthorize 활성화
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true) // 특정 주소 접근시 권한 및 인증을 위한 어노테이션 활성화
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
+@AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final PrincipalOauth2UserService principalOauth2UserService;
-    private final CorsConfig corsConfig;
-    private final UserRepository userRepository;
-    private final JwtTokenProvider tokenProvider;
+    @Autowired
+    private PrincipalOauth2UserService principalOauth2UserService;
+    //private final CorsConfig corsConfig;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private JwtTokenProvider tokenProvider;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.headers().frameOptions().disable();
+        http
+                .headers().frameOptions().disable();
 
         http.csrf().disable(); //csrf 토큰
         http.cors();
@@ -49,7 +54,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin().disable();
         http.httpBasic().disable();
         http.addFilter(new JwtCommonAuthorizationFilter(authenticationManager(), tokenProvider, userRepository));
-
         http.authorizeRequests()
                 .antMatchers("/user/**").access("hasRole('ROLE_USER')")
                 .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
@@ -88,4 +92,3 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .build().toUriString();
     }
 }
-
