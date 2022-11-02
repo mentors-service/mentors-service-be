@@ -21,12 +21,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
 
     private final UserRepository userRepository;
-    //private final JwtService jwtService;
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-    // userRequest 는 code를 받아서 accessToken을 응답 받은 객체
-    //구글로 부터 받은 userRequest데이터에 대한 후처리 함수
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest); // google의 회원 프로필 조회
@@ -43,26 +38,23 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
         // Attribute를 파싱해서 공통 객체로 묶는다. 관리가 편함.
          OAuth2UserInfo oAuth2UserInfo = null;
-
          if (userRequest.getClientRegistration().getRegistrationId().equals("kakao")){
-            System.out.println("카카오 로그인 요청~~");
-            System.out.println("oAuth2User: "+oAuth2User.getAttributes());
+            //System.out.println("카카오 로그인 요청~~");
+            //System.out.println("oAuth2User: "+oAuth2User.getAttributes());
             oAuth2UserInfo = new KakaoUserInfo((Map)oAuth2User.getAttributes());
-        }
-
-
-        //System.out.println("oAuth2UserInfo.getProvider() : " + oAuth2UserInfo.getProvider());
-        //System.out.println("oAuth2UserInfo.getProviderId() : " + oAuth2UserInfo.getProviderId());
-        Optional<UserEntity> userOptional =
+         }else{
+             System.out.println("카카오만 지원함");
+         }
+         Optional<UserEntity> userOptional =
                 userRepository.findByProviderAndProviderId(oAuth2UserInfo.getProvider(), oAuth2UserInfo.getProviderId());
 
-        UserEntity user;
-        if (userOptional.isPresent()) {
+         UserEntity user = userOptional.get();
+         if (userOptional.isPresent()) {
             user = userOptional.get();
             // user가 존재하면 update 해주기
             user.setEmail(oAuth2UserInfo.getEmail());
             userRepository.save(user);
-        } else {
+         } else {
             // user의 패스워드가 null이기 때문에 OAuth 유저는 일반적인 로그인을 할 수 없음.
             user = UserEntity.builder()
                     .username(oAuth2UserInfo.getProvider() + "_" + oAuth2UserInfo.getProviderId())
@@ -72,11 +64,9 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     .providerId(oAuth2UserInfo.getProviderId())
                     .build();
             userRepository.save(user);
-        }
+         }
 
-        //JwtToken jwtTokenDTO = jwtService.joinJwtToken(user.getId());
-
-        return new PrincipalDetails(user, oAuth2User.getAttributes());
+         return new PrincipalDetails(user, oAuth2User.getAttributes());
     }
 
 }
