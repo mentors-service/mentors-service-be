@@ -33,8 +33,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private PrincipalOauth2UserService principalOauth2UserService;
+    private final PrincipalOauth2UserService principalOauth2UserService;
     private final CorsConfig corsConfig;
     private final UserRepository userRepository;
     private final JwtTokenProvider tokenProvider;
@@ -62,11 +61,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .userInfoEndpoint()
                 .userService(principalOauth2UserService)
                 .and()
-                //권한이 없는 페이지로 이동할때 로그인 페이지로 이동
-//                //.formLogin()
-//                .loginPage("/login")
-//                .loginProcessingUrl("/loginProc")
-//               .defaultSuccessUrl("/")
                 .successHandler(new AuthenticationSuccessHandler() {
                     @Override
                     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -93,17 +87,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/kakao?token="+token)
                 .build().toUriString();
     }
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(principalDetailsService).passwordEncoder(encodePWD());
-//    }
-//
-//    @Bean
-//    @Override
-//    public AuthenticationManager authenticationManagerBean() throws Exception {
-//        return super.authenticationManagerBean();
-//    }
-
-
 }
 
