@@ -35,11 +35,12 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     }
 
     private OAuth2User processOAuth2User(OAuth2UserRequest userRequest, OAuth2User oAuth2User) {
+        System.out.println("processOAuth2User 요청~~");
 
         // Attribute를 파싱해서 공통 객체로 묶는다. 관리가 편함.
          OAuth2UserInfo oAuth2UserInfo = null;
          if (userRequest.getClientRegistration().getRegistrationId().equals("kakao")){
-            //System.out.println("카카오 로그인 요청~~");
+            System.out.println("카카오 로그인 요청~~");
             //System.out.println("oAuth2User: "+oAuth2User.getAttributes());
             oAuth2UserInfo = new KakaoUserInfo((Map)oAuth2User.getAttributes());
          }else{
@@ -48,7 +49,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
          Optional<UserEntity> userOptional =
                 userRepository.findByProviderAndProviderId(oAuth2UserInfo.getProvider(), oAuth2UserInfo.getProviderId());
 
-         UserEntity user = userOptional.get();
+         UserEntity user;
          if (userOptional.isPresent()) {
             user = userOptional.get();
             // user가 존재하면 update 해주기
