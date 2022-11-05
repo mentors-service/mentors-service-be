@@ -1,6 +1,5 @@
 package com.example.mentomen.article.dto;
 
-import com.example.mentomen.article.entity.Article;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,10 +22,4 @@ public class ArticleRequestDto {
         this.content = content;
     }
 
-    public Article toEntity() {
-        return Article.builder()
-                .title(title)
-                .content(content)
-                .build();
-    }
 }

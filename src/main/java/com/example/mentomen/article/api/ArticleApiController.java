@@ -1,9 +1,13 @@
 package com.example.mentomen.article.api;
 
 import com.example.mentomen.article.dto.ArticleRequestDto;
-import com.example.mentomen.article.dto.ArticleResponseDto;
 import com.example.mentomen.article.service.ArticleService;
+import com.example.mentomen.article.vo.ArticleVO;
+
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -11,32 +15,44 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value="/api/articles")
+@RequestMapping(value = "/api/articles")
 public class ArticleApiController {
 
-    private final ArticleService articleService;
+    @Autowired
+    private ArticleService articleService;
 
+    @CrossOrigin(origins = "*")
     @GetMapping
-    public List<ArticleResponseDto> articles() {
-
-        return articleService.articles();
+    public ResponseEntity<List<ArticleVO>> getArticleList(
+            @RequestParam(name = "limit") Integer limit, // 10개
+            @RequestParam(name = "offset") Integer offset,
+            @RequestParam(name = "searchObj") String searchObj,
+            @RequestParam(name = "searchVal") String searchVal) {
+        return ResponseEntity.ok(articleService.articles());
     }
 
+    // TODO
+
+    @CrossOrigin(origins = "*")
+    @GetMapping
+    public ResponseEntity<List<ArticleVO>> getCommentsList(
+            @RequestParam(name = "limit") Integer limit, // 10개
+            @RequestParam(name = "offset") Integer offset,
+            @RequestParam(name = "searchObj") String searchObj,
+            @RequestParam(name = "searchVal") String searchVal) {
+        return ResponseEntity.ok(articleService.articles());
+    }
+
+    @CrossOrigin(origins = "*")
     @GetMapping("/{id}")
-    public ArticleResponseDto findById(@PathVariable Long id) {
+    public ArticleVO getArticle(@PathVariable Long id) {
 
         return articleService.findById(id);
     }
 
-    @PostMapping
-    public Long save(@Valid @RequestBody ArticleRequestDto requestDto) {
-
-        return articleService.save(requestDto);
-    }
-
     @PatchMapping("/{id}")
-    public Long update(@Valid@ PathVariable Long id,
-                       @RequestBody ArticleRequestDto requestDto) {
+    public Long update(@Valid @PathVariable Long id,
+            @RequestBody ArticleRequestDto requestDto) {
 
         return articleService.update(id, requestDto);
     }
@@ -47,4 +63,5 @@ public class ArticleApiController {
         articleService.delete(id);
         return id;
     }
+
 }

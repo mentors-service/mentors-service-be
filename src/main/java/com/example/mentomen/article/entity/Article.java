@@ -1,10 +1,15 @@
 package com.example.mentomen.article.entity;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.persistence.*;
+
+import com.example.mentomen.article.code.ArticleStatusCode;
 
 @Entity
 @NoArgsConstructor
@@ -12,26 +17,38 @@ import javax.persistence.*;
 public class Article {
 
     @Id
-    @Column(name="article_id")
+    @Column(name = "article_id")
     @GeneratedValue(strategy = GenerationType.AUTO) // 자동 생성 전략
     private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "creater_id")
+    // @OneToOne(mappedBy = "locker") 대상 Entity에 걸어주기
+    private Long createrId;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createAt;
 
     @Column
     private String title;
 
     @Column
-    private String content;
+    private String place;
 
-    @Builder
-    public Article(String title, String content) {
-        this.title = title;
-        this.content = content;
-    }
+    @Column
+    private String contents;
 
-    public void update(String title, String content) {
-        if (title != null)
-            this.title = title;
-        if (content != null)
-            this.content = content;
-    }
+    @OneToOne
+    @JoinColumn(name = "id")
+    private Member member;
+
+    @OneToOne
+    @JoinColumn(name = "id")
+    private Scrap scrap;
+
+    @OneToMany(mappedBy = "article")
+    private List<Comment> comment = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    private ArticleStatusCode status;
 }
