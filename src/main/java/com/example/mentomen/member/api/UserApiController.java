@@ -51,4 +51,10 @@ public class UserApiController {
 
         return obj.toString();
     }
+
+    @PatchMapping
+    public void update(@Valid @RequestBody UserDto userDto, Authentication authentication) {
+        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
+        userService.update(principal.getUsername(),userDto);
+    }
 }
