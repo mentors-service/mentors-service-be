@@ -1,13 +1,15 @@
 package com.example.mentomen.article.repository;
 
 import com.example.mentomen.article.entity.Article;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public interface ArticleRepository extends CrudRepository<Article, Long> {
+public interface ArticleRepository extends JpaRepository<Article, Long> {
 
-    @Override
-    ArrayList<Article> findAll();
+    @Query("select a from Article a join fetch a.user where a.user.email = email")
+    List<Article> findByUserEmail(@Param("email") String email);
 
 }
