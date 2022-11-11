@@ -4,6 +4,7 @@ import com.example.mentomen.article.dto.ArticleRequestDto;
 import com.example.mentomen.article.dto.ArticleResponseDto;
 import com.example.mentomen.article.entity.Article;
 import com.example.mentomen.article.repository.ArticleRepository;
+import com.example.mentomen.member.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,13 +20,14 @@ import java.util.stream.Collectors;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     public List<ArticleResponseDto> articles() {
 
         return articleRepository.findAll()
                 .stream()
-                .map(article -> new ArticleResponseDto(article))
+                .map(ArticleResponseDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -39,9 +41,12 @@ public class ArticleService {
     }
 
 
-    public Long save(ArticleRequestDto requestDto) {
+    public Long save(ArticleRequestDto requestDto,String email) {
 
-        return articleRepository.save(requestDto.toEntity()).getId();
+        Article article = requestDto.toEntity();
+        article.confirmUser(userRepository.findByEmail(email));
+
+        return articleRepository.save(article).getId();
     }
 
     public Long update(Long id, ArticleRequestDto requestDto) {
@@ -61,5 +66,4 @@ public class ArticleService {
 
         articleRepository.delete(article);
     }
-
 }

@@ -1,6 +1,7 @@
 package com.example.mentomen.article.dto;
 
 import com.example.mentomen.article.entity.Article;
+import com.example.mentomen.member.entity.UserEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
