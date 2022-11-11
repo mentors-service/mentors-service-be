@@ -39,4 +39,10 @@ public class Article {
         if (content != null)
             this.content = content;
     }
+
+    //== 연관관계 편의 메서드 ==//
+    public void confirmUser(UserEntity user) {
+        this.user = user;
+        System.out.println("유저아이디; "+this.user);
+    }
 }
