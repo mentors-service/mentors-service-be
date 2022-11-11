@@ -3,7 +3,16 @@ package com.example.mentomen.article.api;
 import com.example.mentomen.article.dto.ArticleRequestDto;
 import com.example.mentomen.article.dto.ArticleResponseDto;
 import com.example.mentomen.article.service.ArticleService;
+import com.example.mentomen.member.config.auth.PrincipalDetails;
+import com.example.mentomen.member.dto.UserDto;
+import com.example.mentomen.member.entity.UserEntity;
+import com.example.mentomen.member.service.UserService;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,11 +37,21 @@ public class ArticleApiController {
         return articleService.findById(id);
     }
 
-    @PostMapping
-    public Long save(@Valid @RequestBody ArticleRequestDto requestDto) {
 
-        return articleService.save(requestDto);
+    @PostMapping
+    public Long save(@Valid @RequestBody ArticleRequestDto requestDto,Authentication authentication) {
+
+        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
+
+        System.out.println("posttest: "+principal.getUsername());
+        return articleService.save(requestDto,principal.getUsername());
     }
+
+//    @PostMapping
+//    public Long save(@Valid @RequestBody ArticleRequestDto requestDto) {
+//
+//        return articleService.save(requestDto);
+//    }
 
     @PatchMapping("/{id}")
     public Long update(@Valid@ PathVariable Long id,
