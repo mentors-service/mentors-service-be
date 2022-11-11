@@ -11,6 +11,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +39,7 @@ public class ArticleApiController {
     }
 
 
+    @Secured("ROLE_USER")
     @PostMapping
     public Long save(@Valid @RequestBody ArticleRequestDto requestDto,Authentication authentication) {
 
@@ -53,6 +55,7 @@ public class ArticleApiController {
 //        return articleService.save(requestDto);
 //    }
 
+    @Secured("ROLE_USER")
     @PatchMapping("/{id}")
     public Long update(@Valid@ PathVariable Long id,
                        @RequestBody ArticleRequestDto requestDto) {
@@ -60,6 +63,7 @@ public class ArticleApiController {
         return articleService.update(id, requestDto);
     }
 
+    @Secured("ROLE_USER")
     @DeleteMapping("/{id}")
     public Long delete(@PathVariable Long id) {
 
