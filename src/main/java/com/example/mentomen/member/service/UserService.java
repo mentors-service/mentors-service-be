@@ -29,4 +29,11 @@ public class UserService {
 
         return new UserDto(user);
     }
+
+    public void update(String email, UserDto userDto) {
+
+        UserEntity user = userRepository.findByEmail(email);
+
+        user.update(userDto.getNickname(),userDto.getDiscription());
+    }
 }
