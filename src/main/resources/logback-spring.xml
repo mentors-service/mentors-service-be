@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <springProfile name="default | local">
+        <property resource="application-local.properties" />
+    </springProfile>
+    <springProfile name="dev">
+        <property resource="application-dev.properties" />
+    </springProfile>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %p [%t] %logger{39} : %m%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="FILE_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/mentomen.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %p [%t] %logger{39} : %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${logging.base.dir}/mentomen.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>200MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>50GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+    <appender name="ASYNC_FILE_APPENDER" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="FILE_APPENDER" />
+    </appender>
+    <springProfile name="default | local">
+        <logger name="com.example.mentomen" level="DEBUG" />
+        <root level="INFO">
+            <appender-ref ref="ASYNC_FILE_APPENDER" />
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+    <springProfile name="dev">
+        <logger name="com.example.mentomen" level="DEBUG" />
+        <root level="INFO">
+            <appender-ref ref="ASYNC_FILE_APPENDER" />
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+</configuration>
