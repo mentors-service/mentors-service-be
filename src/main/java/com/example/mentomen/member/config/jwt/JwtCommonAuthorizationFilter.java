@@ -32,20 +32,18 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         System.out.println("JwtCommonAuthorizationFilter의 dofilter탐");
-        // Read the Authorization header, where the JWT token should be
+
         String header = request.getHeader("Authorization");
+        System.out.println("header: "+header);
 
-
-        // If header does not contain BEARER or is null delegate to Spring impl and exit
         if (header == null || !header.startsWith("Bearer")) {
             chain.doFilter(request, response);
             System.out.println("걸림");
             return;
         }
-        // If header is present, try grab user principal from database and perform authorization
+
         Authentication authentication = getUsernamePasswordAuthentication(request);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        // Continue filter execution
         chain.doFilter(request, response);
     }
 
@@ -56,9 +54,6 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
         System.out.println("token : " +token);
         if (token != null) {
             System.out.println("token != null");
-//            Claims claims = jwtTokenProvider.getClaims(token);
-//            String userUuid = claims.getSubject(); // getSubject 값은 users의 id값
-//            System.out.println("claims의 userUuid : " + userUuid);
 
             String email = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
                     .getClaim("email").asString();
@@ -66,15 +61,15 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
 
             if (email != null) {
                 UserEntity user = userRepository.findByEmail(email);
-                //UserEntity user = oUser.get();
+
                 PrincipalDetails principalDetails = new PrincipalDetails(user);
                 Authentication authentication =
                         new UsernamePasswordAuthenticationToken(
-                                principalDetails, //나중에 컨트롤러에서 DI해서 쓸 때 사용하기 편함.
-                                null, // 패스워드는 모르니까 null 처리, 어차피 지금 인증하는게 아니니까!!
+                                principalDetails,
+                                null,
                                 principalDetails.getAuthorities());
                 //강제로 시큐리티의 세션에 접근해 Authentication객체를 저장
-                SecurityContextHolder.getContext().setAuthentication(authentication); // 세션에 넣기
+                SecurityContextHolder.getContext().setAuthentication(authentication);
                 return authentication;
             }
         }
