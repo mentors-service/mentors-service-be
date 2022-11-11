@@ -1,5 +1,6 @@
 package com.example.mentomen.article.entity;
 
+import com.example.mentomen.member.entity.UserEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,10 @@ public class Article {
 
     @Column
     private String content;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
+    private UserEntity user;
 
     @Builder
     public Article(String title, String content) {
