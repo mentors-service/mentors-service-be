@@ -66,4 +66,13 @@ public class ArticleService {
 
         articleRepository.delete(article);
     }
+
+    @Transactional(readOnly = true)
+    public List<ArticleResponseDto> myArticles(String username) {
+
+        return articleRepository.findByUserEmail(username)
+                .stream()
+                .map(ArticleResponseDto::new)
+                .collect(Collectors.toList());
+    }
 }
