@@ -1,7 +1,7 @@
 package com.example.mentomen.article.entity;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,8 +12,8 @@ import javax.persistence.*;
 import com.example.mentomen.article.code.ArticleStatusCode;
 
 @Entity
-@NoArgsConstructor
 @Getter
+@Builder
 public class Article {
 
     @Id
@@ -51,4 +51,5 @@ public class Article {
 
     @Enumerated(EnumType.STRING)
     private ArticleStatusCode status;
+
 }

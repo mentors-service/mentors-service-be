@@ -31,23 +31,17 @@ public class ArticleApiController {
         return ResponseEntity.ok(articleService.articles());
     }
 
-    // TODO
-
-    @CrossOrigin(origins = "*")
-    @GetMapping
-    public ResponseEntity<List<ArticleVO>> getCommentsList(
-            @RequestParam(name = "limit") Integer limit, // 10개
-            @RequestParam(name = "offset") Integer offset,
-            @RequestParam(name = "searchObj") String searchObj,
-            @RequestParam(name = "searchVal") String searchVal) {
-        return ResponseEntity.ok(articleService.articles());
-    }
-
     @CrossOrigin(origins = "*")
     @GetMapping("/{id}")
     public ArticleVO getArticle(@PathVariable Long id) {
 
         return articleService.findById(id);
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping
+    public ResponseEntity<ArticleVO> saveArticle(@RequestBody ArticleVO article) {
+        return ResponseEntity.ok(articleService.saveArticle(article));
     }
 
     @PatchMapping("/{id}")

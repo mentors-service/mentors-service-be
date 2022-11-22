@@ -9,6 +9,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class CommentVO {
+    private String commentId;
     private CreaterVO creater;
     private Date createdAt;
     private String content;

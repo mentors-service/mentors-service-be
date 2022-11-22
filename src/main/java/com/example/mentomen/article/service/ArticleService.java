@@ -73,6 +73,23 @@ public class ArticleService {
         return id;
     }
 
+    public ArticleVO saveArticle(ArticleVO articleVO) {
+        
+        Article article = Article.builder()
+                .title(articleVO.getTitle())
+                .build();
+        Article result = articleRepository.save(article)
+        return result;
+    }
+
+    public Long saveComment(ArticleVO article) {
+
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("게시글 수정 실패! 게시글 댓글이 없습니다." + id));
+
+        return id;
+    }
+
     public void delete(Long id) {
 
         Article article = articleRepository.findById(id)
