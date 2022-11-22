@@ -1,42 +1,72 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.mentomen.comment.mapper.CommentMapper">
-  <resultMap id="article" type="com.example.mentomen.article.vo.ArticleVO">
-    <id property="id" column="id" />
-    <result property="creator" column="creator" />
-    <result property="name" column="name" />
-    <result property="detail" column="detail" />
-    <result property="dataSet" column="data_set" />
-    <result property="dataModel" column="data_model" />
-    <result property="collector" column="collector" typeHandler="io.dtonic.dhubingestmodule.common.handler.JsonTypeHandler" />
-    <result property="filter" column="filter" typeHandler="io.dtonic.dhubingestmodule.common.handler.JsonTypeHandler" />
-    <result property="converter" column="converter" typeHandler="io.dtonic.dhubingestmodule.common.handler.JsonTypeHandler" />
+  <resultMap id="comment" type="com.example.mentomen.comment.dao.CommentDAO">
+    <id property="commentId" column="comment_id" />
+    <result property="articleId" column="article_id" />
+    <result property="creatorId" column="creator_id" />
+    <result property="parentId" column="parent_id" />
+    <result property="contents" column="contents" />
     <result property="createdAt" column="created_at" />
     <result property="modifiedAt" column="modified_at" />
   </resultMap>
-  <select id="getArticleList" resultType="com.example.mentomen.article.vo.ArticleVO" resultMap="article"></select>
-  <select id="getArticle" resultType="com.example.mentomen.article.vo.ArticleVO" resultMap="article"></select>
-  <insert id="saveArticle" parameterType="String">
+  <select id="getCommentList" resultType="com.example.mentomen.comment.dao.CommentDAO" resultMap="comment">
+    SELECT
+      comment_id,
+      article_id,
+      creator_id,
+      parent_id,
+      contents,
+      created_at,
+      modified_at
+    FROM
+      comment
+    WHERE
+      article_id = #{article_id};
+  </select>
+  <select id="getCommentChildList" resultType="com.example.mentomen.comment.dao.CommentDAO" resultMap="comment">
+    SELECT
+      comment_id,
+      article_id,
+      creator_id,
+      parent_id,
+      contents,
+      created_at,
+      modified_at
+    FROM
+      comment
+    WHERE
+    parent_id = #{parent_id};
+  </select>
+  <insert id="saveComment" parameterType="String">
     INSERT INTO 
-      temp_pipeline
+      comment
       (
-        name,
-        creator,
-        detail, 
+        creator_id,
+        parent_id,
+        contents,
         created_at,
         modified_at
         )
       VALUES 
       (
-        #{name}, 
-        #{creator}, 
-        #{detail}, 
+        #{creator_id}, 
+        #{parent_id, jdbcType=INTEGER}, 
+        #{contents}, 
         now(),
         now()
-        )
+        );
     </insert>
-  <update id="updateArticle"></update>
-  <delete id="deleteArticle" parameterType="Integer">
-    DELETE FROM article
-    WHERE id = #{articleId}
+  <update id="updateArticle">
+    UPDATE comment
+    SET
+    creator_id=#{creator_id, jdbcType=INTEGER},
+    parent_id=#{parent_id, jdbcType=INTEGER}, 
+    contents=#{contents, jdbcType=VARCHAR},
+    modified_at=now()
+    WHERE comment_id=#{comment_id};
+  </update>
+  <delete id="deleteComment" parameterType="Integer">
+    DELETE FROM comment
+    WHERE comment_id = #{comment_id}
   </delete>
 </mapper>

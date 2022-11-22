@@ -11,9 +11,10 @@ import lombok.Getter;
 @Getter
 @Builder
 public class CommentVO {
-    private String commentId;
+    private Integer commentId;
     private CreaterVO creater;
     private Date createdAt;
+    private Date modifiedAt;
     private String content;
     private List<CommentVO> childs;
 }

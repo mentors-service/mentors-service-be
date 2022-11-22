@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.mentomen.comment.service.CommentService;
+import com.example.mentomen.comment.vo.CommentRetriveVO;
 import com.example.mentomen.comment.vo.CommentVO;
 
 @RestController
@@ -35,8 +36,7 @@ public class CommentApiController {
 
   @CrossOrigin(origins = "*")
   @PostMapping
-  public ResponseEntity<String> saveComment(@RequestBody CommentVO comment,
-      @RequestParam(name = "parentId", required = false) Integer parentId) {
+  public ResponseEntity<String> saveComment(@RequestBody CommentRetriveVO comment) {
     Integer res = commentService.save(comment);
     if (res == 1) {
       return ResponseEntity.ok().body("Success Save Comment");
@@ -48,8 +48,8 @@ public class CommentApiController {
   @PatchMapping("/{commentId}")
   public ResponseEntity<CommentVO> updateArticle(
       @PathVariable Integer commentId,
-      @RequestBody CommentVO commentVO) {
-    return ResponseEntity.ok(commentService.update(commentId));
+      @RequestBody CommentRetriveVO comment) {
+    return ResponseEntity.ok(commentService.update(commentId, comment));
   }
 
   @DeleteMapping("/{commentId}")
