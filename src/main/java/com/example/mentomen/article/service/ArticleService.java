@@ -1,7 +1,10 @@
 package com.example.mentomen.article.service;
 
+import com.example.mentomen.article.dao.ArticleDAO;
 import com.example.mentomen.article.mapper.ArticleMapper;
 import com.example.mentomen.article.vo.ArticleVO;
+
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,26 +19,31 @@ public class ArticleService {
 
   @Transactional(readOnly = true)
   public List<ArticleVO> articles(
-    Integer limit,
-    Integer offset,
-    String searchObj,
-    String searchVal,
-    String orderObj,
-    String orderBy
-  ) {
-    return articleMapper.getArticleList(
-      limit,
-      offset,
-      searchObj,
-      searchVal,
-      orderObj,
-      orderBy
-    );
+      Integer limit,
+      Integer offset,
+      String searchObj,
+      String searchVal,
+      String orderObj,
+      String orderBy) {
+    List<ArticleVO> articleList = new ArrayList<>();
+    List<ArticleDAO> rawArticleList = articleMapper.getArticleList(
+        limit,
+        offset,
+        searchObj,
+        searchVal,
+        orderObj,
+        orderBy);
+    for (ArticleDAO rawArticle : rawArticleList) {
+      ArticleVO article = ArticleVO.builder().articleId(rawArticle.getArticleId()).build();
+      articleList.add(article);
+    }
+    return articleList;
   }
 
   @Transactional(readOnly = true)
   public ArticleVO findById(Integer id) {
-    return articleMapper.getArticle(id);
+    ArticleDAO rawArticle = articleMapper.getArticle(id);
+    return ArticleVO.builder().articleId(rawArticle.getArticleId()).build();
   }
 
   public ArticleVO update(Integer id) {

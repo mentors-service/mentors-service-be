@@ -1,6 +1,11 @@
 package com.example.mentomen.article.vo;
 
 import com.example.mentomen.article.code.ArticleStatusCode;
+import com.example.mentomen.comment.vo.CommentVO;
+import com.example.mentomen.scrap.vo.ScrapVO;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.Date;
 import java.util.List;
 import lombok.Builder;
@@ -9,6 +14,8 @@ import lombok.Singular;
 
 @Getter
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class ArticleVO {
 
   private Integer articleId;
@@ -18,7 +25,6 @@ public class ArticleVO {
   private String title;
   private String place;
   private String contents;
-  private MemberVO member;
   private ScrapVO scraps;
 
   @Singular("comment")

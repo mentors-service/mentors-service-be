@@ -1,6 +1,5 @@
 package com.example.mentomen.article.api;
 
-import com.example.mentomen.article.dto.ArticleRequestDto;
 import com.example.mentomen.article.service.ArticleService;
 import com.example.mentomen.article.vo.ArticleVO;
 import java.util.List;
@@ -19,23 +18,20 @@ public class ArticleApiController {
   @CrossOrigin(origins = "*")
   @GetMapping
   public ResponseEntity<List<ArticleVO>> getArticleList(
-    @RequestParam(name = "limit") Integer limit, // 10개
-    @RequestParam(name = "offset") Integer offset,
-    @RequestParam(name = "searchObj") String searchObj,
-    @RequestParam(name = "searchVal") String searchVal,
-    @RequestParam(name = "orderObj") String orderObj,
-    @RequestParam(name = "orderBy") String orderBy
-  ) {
+      @RequestParam(name = "limit") Integer limit, // 10개
+      @RequestParam(name = "offset") Integer offset,
+      @RequestParam(name = "searchObj") String searchObj,
+      @RequestParam(name = "searchVal") String searchVal,
+      @RequestParam(name = "orderObj") String orderObj,
+      @RequestParam(name = "orderBy") String orderBy) {
     return ResponseEntity.ok(
-      articleService.articles(
-        limit,
-        offset,
-        searchObj,
-        searchVal,
-        orderObj,
-        orderBy
-      )
-    );
+        articleService.articles(
+            limit,
+            offset,
+            searchObj,
+            searchVal,
+            orderObj,
+            orderBy));
   }
 
   @CrossOrigin(origins = "*")
@@ -57,9 +53,8 @@ public class ArticleApiController {
 
   @PatchMapping("/{id}")
   public ResponseEntity<ArticleVO> updateArticle(
-    @PathVariable Integer id,
-    @RequestBody ArticleRequestDto requestDto
-  ) {
+      @PathVariable Integer id,
+      @RequestBody ArticleVO requestDto) {
     return ResponseEntity.ok(articleService.update(id));
   }
 

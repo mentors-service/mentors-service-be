@@ -1,7 +1,9 @@
-package com.example.mentomen.article.vo;
+package com.example.mentomen.comment.vo;
 
 import java.util.Date;
 import java.util.List;
+
+import com.example.mentomen.article.vo.CreaterVO;
 
 import lombok.Builder;
 import lombok.Getter;
