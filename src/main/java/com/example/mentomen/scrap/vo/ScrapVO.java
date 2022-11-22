@@ -1,12 +1,14 @@
 package com.example.mentomen.scrap.vo;
 
-import com.example.mentomen.article.vo.CreaterVO;
+import java.util.List;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 
-@Data
+@Getter
+@Builder
 public class ScrapVO {
-    private String articleId;
+    private Integer articleId;
     private Integer scrapCnt;
-    private CreaterVO createrVO;
+    private List<Integer> createrIdList;
 }

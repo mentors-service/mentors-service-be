@@ -1,42 +1,45 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.mentomen.article.mapper.articleMapper">
-    <resultMap id="article" type="com.example.mentomen.article.vo.ArticleVO">
-        <id property="id" column="id" />
-        <result property="creator" column="creator" />
-        <result property="name" column="name" />
-        <result property="detail" column="detail" />
-        <result property="dataSet" column="data_set" />
-        <result property="dataModel" column="data_model" />
-        <result property="collector" column="collector" typeHandler="io.dtonic.dhubingestmodule.common.handler.JsonTypeHandler" />
-        <result property="filter" column="filter" typeHandler="io.dtonic.dhubingestmodule.common.handler.JsonTypeHandler" />
-        <result property="converter" column="converter" typeHandler="io.dtonic.dhubingestmodule.common.handler.JsonTypeHandler" />
-        <result property="createdAt" column="created_at" />
-        <result property="modifiedAt" column="modified_at" />
-    </resultMap>
-    <select id="getArticleList" resultType="com.example.mentomen.article.vo.ArticleVO" resultMap="article"></select>
-    <select id="getArticle" resultType="com.example.mentomen.article.vo.ArticleVO" resultMap="article"></select>
-    <insert id="saveArticle" parameterType="String">
+<mapper namespace="com.example.mentomen.recruit.mapper.RecruitMapper">
+  <resultMap id="recruit" type="com.example.mentomen.recruit.dao.RecruitDAO">
+    <id property="memberId" column="member_id" />
+    <result property="articleId" column="article_id" />
+    <result property="joinUserId" column="join_user_id" />
+  </resultMap>
+  <select id="getRecruitByUserId" resultType="com.example.mentomen.recruit.dao.RecruitDAO" resultMap="recruit">
+    SELECT
+      member_id,
+      article_id,
+      join_user_id
+    FROM
+      scrap
+    WHERE
+      join_user_id = #{user_id}
+  </select>
+  <select id="getRecruitByArticleId" resultType="com.example.mentomen.recruit.dao.RecruitDAO" resultMap="recruit">
+    SELECT
+      member_id,
+      article_id,
+      join_user_id
+    FROM
+      scrap
+    WHERE
+      article_id = #{article_id}
+  </select>
+  <insert id="saveRecruit" parameterType="Integer">
     INSERT INTO 
-      temp_pipeline
+      scrap
       (
-        name,
-        creator,
-        detail, 
-        created_at,
-        modified_at
+        article_id,
+        join_user_id
         )
       VALUES 
       (
-        #{name}, 
-        #{creator}, 
-        #{detail}, 
-        now(),
-        now()
+        #{article_id}, 
+        #{user_id}, 
         )
     </insert>
-    <update id="updateArticle"></update>
-    <delete id="deleteArticle" parameterType="Integer">
+  <delete id="deleteRecruit" parameterType="Integer">
     DELETE FROM article
-    WHERE id = #{articleId}
+    WHERE 1=1 AND article_id = #{article_id} AND join_user_id = #{user_id}
   </delete>
 </mapper>

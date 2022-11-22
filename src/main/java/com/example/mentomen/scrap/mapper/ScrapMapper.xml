@@ -1,42 +1,45 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.mentomen.scrap.mapper.ScrapMapper">
-    <resultMap id="article" type="com.example.mentomen.article.vo.ArticleVO">
-        <id property="id" column="id" />
-        <result property="creator" column="creator" />
-        <result property="name" column="name" />
-        <result property="detail" column="detail" />
-        <result property="dataSet" column="data_set" />
-        <result property="dataModel" column="data_model" />
-        <result property="collector" column="collector" typeHandler="io.dtonic.dhubingestmodule.common.handler.JsonTypeHandler" />
-        <result property="filter" column="filter" typeHandler="io.dtonic.dhubingestmodule.common.handler.JsonTypeHandler" />
-        <result property="converter" column="converter" typeHandler="io.dtonic.dhubingestmodule.common.handler.JsonTypeHandler" />
-        <result property="createdAt" column="created_at" />
-        <result property="modifiedAt" column="modified_at" />
-    </resultMap>
-    <select id="getArticleList" resultType="com.example.mentomen.article.vo.ArticleVO" resultMap="article"></select>
-    <select id="getArticle" resultType="com.example.mentomen.article.vo.ArticleVO" resultMap="article"></select>
-    <insert id="saveArticle" parameterType="String">
+  <resultMap id="scrap" type="com.example.mentomen.article.dao.ScrapDAO">
+    <id property="scrapId" column="scrap_id" />
+    <result property="articleId" column="article_id" />
+    <result property="scrapUserId" column="scrap_user_id" />
+  </resultMap>
+  <select id="getScrapByUserId" resultType="com.example.mentomen.article.dao.ScrapDAO" resultMap="scrap">
+    SELECT
+      scrap_id,
+      article_id,
+      scrap_user_id
+    FROM
+      scrap
+    WHERE
+      scrap_user_id = #{user_id}
+  </select>
+  <select id="getScrapByArticleId" resultType="com.example.mentomen.article.dao.ScrapDAO" resultMap="scrap">
+    SELECT
+      scrap_id,
+      article_id,
+      scrap_user_id
+    FROM
+      scrap
+    WHERE
+      article_id = #{article_id}
+  </select>
+  <insert id="saveScrap" parameterType="Integer">
     INSERT INTO 
-      temp_pipeline
+      scrap
       (
-        name,
-        creator,
-        detail, 
-        created_at,
-        modified_at
+        article_id,
+        scrap_user_id
         )
       VALUES 
       (
-        #{name}, 
-        #{creator}, 
-        #{detail}, 
-        now(),
-        now()
+        #{article_id}, 
+        #{user_id}, 
         )
     </insert>
-    <update id="updateArticle"></update>
-    <delete id="deleteArticle" parameterType="Integer">
+  <delete id="deleteScrap" parameterType="Integer">
     DELETE FROM article
-    WHERE id = #{articleId}
+    WHERE 1=1 AND article_id = #{article_id} AND scrap_user_id = #{user_id}
   </delete>
 </mapper>

@@ -1,8 +1,14 @@
 package com.example.mentomen.recruit.vo;
 
-import lombok.Data;
+import java.util.List;
 
-@Data
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@Builder
 public class RecruitVO {
-
+    private Integer articleId;
+    private Integer joinCnt;
+    private List<Integer> createrIdList;
 }

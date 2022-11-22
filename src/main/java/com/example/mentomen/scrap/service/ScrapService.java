@@ -1,9 +1,12 @@
 package com.example.mentomen.scrap.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import com.example.mentomen.scrap.dao.ScrapDAO;
 import com.example.mentomen.scrap.mapper.ScrapMapper;
 import com.example.mentomen.scrap.vo.ScrapVO;
 
@@ -13,22 +16,30 @@ public class ScrapService {
     @Autowired
     private ScrapMapper scrapMapper;
 
-    private Boolean isScrapByUser(Integer articleId, Integer userId) {
-        return scrapMapper.getArticle(id);
+    // TODO Update Error Exception
+    public String updateScrapStatus(Integer articleId, Integer userId) {
+        if (delete(articleId, userId) == 0) {
+            save(articleId, userId);
+            return "Create Scrap";
+        }
+        return null;
     }
 
-    public Integer updateScrapStatus(Integer articleId, Integer userId, ScrapVO scrapVO) {
-        if (isScrapByUser(articleId, userId)) {
-            return delete(articleId);
-        } else
-            return save(scrapVO);
+    private Integer save(Integer articleId, Integer userId) {
+        return scrapMapper.saveScrap(articleId, userId);
     }
 
-    private Integer save(ScrapVO scrapVO) {
-        return scrapMapper.saveScrap();
+    private Integer delete(Integer articleId, Integer userId) {
+        return scrapMapper.deleteScrap(articleId, userId);
     }
 
-    private Integer delete(Integer id) {
-        return scrapMapper.deleteScrap(id);
+    public ScrapVO scrapBuilderByArticle(Integer articleId) {
+        List<ScrapDAO> rawScrapList = scrapMapper.getScrapByArticleId(articleId);
+        List<Integer> createrIdList = new ArrayList<>();
+        for (ScrapDAO rawScrap : rawScrapList) {
+            createrIdList.add(rawScrap.getScrapUserId());
+        }
+        return ScrapVO.builder().articleId(articleId)
+                .createrIdList(createrIdList).scrapCnt(rawScrapList.size()).build();
     }
 }

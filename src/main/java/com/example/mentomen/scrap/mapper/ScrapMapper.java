@@ -1,18 +1,20 @@
 package com.example.mentomen.scrap.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.example.mentomen.scrap.vo.ScrapVO;
+import com.example.mentomen.scrap.dao.ScrapDAO;
 
 @Mapper
 public interface ScrapMapper {
 
-    ScrapVO getScrapArticleByUserId(@Param("comment_id") Integer commentId);
+    List<ScrapDAO> getScrapByUserId(@Param("user_id") Integer userId);
 
-    ScrapVO getScrapByUserId(@Param("comment_id") Integer commentId);
+    List<ScrapDAO> getScrapByArticleId(@Param("article_id") Integer articleId);
 
-    int saveScrap();
+    int saveScrap(@Param("user_id") Integer userId, @Param("article_id") Integer articleId);
 
-    int deleteScrap(@Param("scrap_id") Integer commentId);
+    int deleteScrap(@Param("user_id") Integer userId, @Param("article_id") Integer articleId);
 }
