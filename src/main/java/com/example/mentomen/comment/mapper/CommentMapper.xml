@@ -21,7 +21,14 @@
     FROM
       comment
     WHERE
-      article_id = #{article_id};
+      1=1
+    <if test="article_id != null">
+        AND article_id = #{article_id}
+      </if>
+    <if test="user_id != null">
+        AND creator_id = #{user_id}
+      </if>
+    ;
   </select>
   <select id="getCommentChildList" resultType="com.example.mentomen.comment.dao.CommentDAO" resultMap="comment">
     SELECT
@@ -37,11 +44,20 @@
     WHERE
     parent_id = #{parent_id};
   </select>
-  <insert id="saveComment" parameterType="String">
+  <select id="getCommentCnt" resultType="Integer">
+    SELECT
+      COUNT(*)
+    FROM
+      comment
+    WHERE
+    article_id = #{article_id};
+  </select>
+  <insert id="saveComment">
     INSERT INTO 
       comment
       (
         creator_id,
+        article_id,
         parent_id,
         contents,
         created_at,
@@ -50,17 +66,17 @@
       VALUES 
       (
         #{creator_id}, 
+        #{article_id}, 
         #{parent_id, jdbcType=INTEGER}, 
         #{contents}, 
         now(),
         now()
-        );
-    </insert>
-  <update id="updateArticle">
+        )
+        RETURNING comment_id;
+  </insert>
+  <update id="updateComment">
     UPDATE comment
     SET
-    creator_id=#{creator_id, jdbcType=INTEGER},
-    parent_id=#{parent_id, jdbcType=INTEGER}, 
     contents=#{contents, jdbcType=VARCHAR},
     modified_at=now()
     WHERE comment_id=#{comment_id};

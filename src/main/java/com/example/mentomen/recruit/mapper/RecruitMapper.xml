@@ -11,9 +11,9 @@
       article_id,
       join_user_id
     FROM
-      scrap
+      member
     WHERE
-      join_user_id = #{user_id}
+      join_user_id = #{user_id};
   </select>
   <select id="getRecruitByArticleId" resultType="com.example.mentomen.recruit.dao.RecruitDAO" resultMap="recruit">
     SELECT
@@ -21,13 +21,13 @@
       article_id,
       join_user_id
     FROM
-      scrap
+    member
     WHERE
-      article_id = #{article_id}
+      article_id = #{article_id};
   </select>
-  <insert id="saveRecruit" parameterType="Integer">
+  <insert id="saveRecruit">
     INSERT INTO 
-      scrap
+    member
       (
         article_id,
         join_user_id
@@ -35,11 +35,11 @@
       VALUES 
       (
         #{article_id}, 
-        #{user_id}, 
-        )
+        #{user_id}
+        );
     </insert>
-  <delete id="deleteRecruit" parameterType="Integer">
-    DELETE FROM article
-    WHERE 1=1 AND article_id = #{article_id} AND join_user_id = #{user_id}
+  <delete id="deleteRecruit">
+    DELETE FROM member
+    WHERE 1=1 AND article_id = #{article_id} AND join_user_id = #{user_id};
   </delete>
 </mapper>

@@ -10,11 +10,11 @@ import com.example.mentomen.recruit.dao.RecruitDAO;
 @Mapper
 public interface RecruitMapper {
 
-    List<RecruitDAO> getRecruitByUserId(@Param("user_id") Integer userId);
+    List<RecruitDAO> getRecruitByUserId(@Param("user_id") Long userId);
 
     List<RecruitDAO> getRecruitByArticleId(@Param("article_id") Integer articleId);
 
-    int saveRecruit(@Param("user_id") Integer userId, @Param("article_id") Integer articleId);
+    int saveRecruit(@Param("user_id") Long userId, @Param("article_id") Integer articleId);
 
-    int deleteRecruit(@Param("user_id") Integer userId, @Param("article_id") Integer articleId);
+    int deleteRecruit(@Param("user_id") Long userId, @Param("article_id") Integer articleId);
 }

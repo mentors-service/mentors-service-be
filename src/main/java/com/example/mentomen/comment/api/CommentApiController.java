@@ -1,5 +1,7 @@
 package com.example.mentomen.comment.api;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ import com.example.mentomen.comment.service.CommentService;
 import com.example.mentomen.comment.vo.CommentRetriveVO;
 import com.example.mentomen.comment.vo.CommentVO;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequestMapping(value = "/api/comment")
 public class CommentApiController {
@@ -28,17 +33,21 @@ public class CommentApiController {
   private CommentService commentService;
 
   @CrossOrigin(origins = "*")
-  @GetMapping("/{articleId}")
+  @GetMapping
   public ResponseEntity<List<CommentVO>> getCommentList(
-      @PathVariable Integer id) {
-    return ResponseEntity.ok(commentService.comments(id));
+      @RequestParam(name = "articleId", required = false) Integer articleId,
+      @RequestParam(name = "userId", required = false) Long userId) {
+    return ResponseEntity.ok(commentService.comments(articleId, userId));
   }
 
   @CrossOrigin(origins = "*")
   @PostMapping
-  public ResponseEntity<String> saveComment(@RequestBody CommentRetriveVO comment) {
-    Integer res = commentService.save(comment);
-    if (res == 1) {
+  public ResponseEntity<String> saveComment(
+      @RequestParam(name = "articleId", required = true) Integer articleId,
+      @RequestParam(name = "parentId", required = false) Integer parentId,
+      @RequestBody CommentRetriveVO comment) {
+    Integer res = commentService.save(articleId, parentId, comment);
+    if (res >= 1) {
       return ResponseEntity.ok().body("Success Save Comment");
     } else {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -46,10 +55,15 @@ public class CommentApiController {
   }
 
   @PatchMapping("/{commentId}")
-  public ResponseEntity<CommentVO> updateArticle(
+  public ResponseEntity<String> updateArticle(
       @PathVariable Integer commentId,
       @RequestBody CommentRetriveVO comment) {
-    return ResponseEntity.ok(commentService.update(commentId, comment));
+    Integer res = commentService.update(commentId, null, comment);
+    if (res >= 1) {
+      return ResponseEntity.ok().body("Success Update Comment");
+    } else {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
   }
 
   @DeleteMapping("/{commentId}")

@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class RecruitVO {
-    private Integer articleId;
+    private Boolean isRecruited;
     private Integer joinCnt;
-    private List<Integer> createrIdList;
+    private List<Long> createrIdList;
 }

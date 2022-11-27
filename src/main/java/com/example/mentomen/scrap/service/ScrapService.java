@@ -17,29 +17,34 @@ public class ScrapService {
     private ScrapMapper scrapMapper;
 
     // TODO Update Error Exception
-    public String updateScrapStatus(Integer articleId, Integer userId) {
+    public String updateScrapStatus(Integer articleId, Long userId) {
         if (delete(articleId, userId) == 0) {
             save(articleId, userId);
             return "Create Scrap";
+        } else {
+            return "Delete Scrap";
         }
-        return null;
     }
 
-    private Integer save(Integer articleId, Integer userId) {
-        return scrapMapper.saveScrap(articleId, userId);
+    private Integer save(Integer articleId, Long userId) {
+        return scrapMapper.saveScrap(userId, articleId);
     }
 
-    private Integer delete(Integer articleId, Integer userId) {
-        return scrapMapper.deleteScrap(articleId, userId);
+    private Integer delete(Integer articleId, Long userId) {
+        return scrapMapper.deleteScrap(userId, articleId);
     }
 
-    public ScrapVO scrapBuilderByArticle(Integer articleId) {
+    public ScrapVO scrapBuilderByArticle(Integer articleId, Long userId) {
         List<ScrapDAO> rawScrapList = scrapMapper.getScrapByArticleId(articleId);
-        List<Integer> createrIdList = new ArrayList<>();
+        List<Long> createrIdList = new ArrayList<>();
+        Boolean isScraped = false;
         for (ScrapDAO rawScrap : rawScrapList) {
             createrIdList.add(rawScrap.getScrapUserId());
+            if (rawScrap.getScrapUserId() == userId) {
+                isScraped = true;
+            }
         }
-        return ScrapVO.builder().articleId(articleId)
+        return ScrapVO.builder().articleId(articleId).isScraped(isScraped)
                 .createrIdList(createrIdList).scrapCnt(rawScrapList.size()).build();
     }
 }

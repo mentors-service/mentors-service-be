@@ -9,18 +9,23 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface ArticleMapper {
   List<ArticleDAO> getArticleList(
-      @Param("limit") Integer limit,
       @Param("offset") Integer offset,
       @Param("searchObj") String searchObj,
-      @Param("searchVal") String searchVal,
-      @Param("orderObj") String orderObj,
-      @Param("orderBy") String orderBy);
+      @Param("searchVal") String searchVal);
 
   ArticleDAO getArticle(@Param("id") Integer id);
 
   ArticleVO updateArticle(@Param("id") Integer id);
 
-  int saveArticle();
+  int saveArticle(
+      @Param("title") String limit,
+      @Param("place") String place,
+      @Param("startDate") String startDate,
+      @Param("endDate") String endDate,
+      @Param("contents") String contents,
+      @Param("status") String status,
+      @Param("totalMember") Integer totalMember,
+      @Param("userId") Long userId);
 
   int deleteArticle(@Param("articleId") Integer adaptorId);
 }

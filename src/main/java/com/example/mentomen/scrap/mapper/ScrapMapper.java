@@ -10,11 +10,11 @@ import com.example.mentomen.scrap.dao.ScrapDAO;
 @Mapper
 public interface ScrapMapper {
 
-    List<ScrapDAO> getScrapByUserId(@Param("user_id") Integer userId);
+    List<ScrapDAO> getScrapByUserId(@Param("user_id") Long userId);
 
     List<ScrapDAO> getScrapByArticleId(@Param("article_id") Integer articleId);
 
-    int saveScrap(@Param("user_id") Integer userId, @Param("article_id") Integer articleId);
+    int saveScrap(@Param("user_id") Long userId, @Param("article_id") Integer articleId);
 
-    int deleteScrap(@Param("user_id") Integer userId, @Param("article_id") Integer articleId);
+    int deleteScrap(@Param("user_id") Long userId, @Param("article_id") Integer articleId);
 }

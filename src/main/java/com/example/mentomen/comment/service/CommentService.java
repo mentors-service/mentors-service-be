@@ -11,56 +11,77 @@ import com.example.mentomen.comment.dao.CommentDAO;
 import com.example.mentomen.comment.mapper.CommentMapper;
 import com.example.mentomen.comment.vo.CommentRetriveVO;
 import com.example.mentomen.comment.vo.CommentVO;
+import com.example.mentomen.member.dto.UserDto;
+import com.example.mentomen.member.entity.UserEntity;
+import com.example.mentomen.member.repository.UserRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class CommentService {
+
   @Autowired
   private CommentMapper commentMapper;
 
+  @Autowired
+  private UserRepository userRepository;
+
   @Transactional(readOnly = true)
   public List<CommentVO> comments(
-      Integer articleId) {
+      Integer articleId, Long userId) {
     List<CommentVO> comments = new ArrayList<>();
-    List<CommentDAO> rawCommentDAOs = commentMapper.getCommentList(articleId);
+    List<CommentDAO> rawCommentDAOs = commentMapper.getCommentList(articleId, userId);
     for (CommentDAO rawCommentDAO : rawCommentDAOs) {
-      comments.add(commentVOBuilder(rawCommentDAO));
+      if (rawCommentDAO.getParentId() == null) {
+        CommentVO parentComment = getParentComment(rawCommentDAO);
+        comments.add(parentComment);
+      }
     }
     return comments;
   }
 
-  public CommentVO update(Integer commentId, CommentRetriveVO comment) {
-    return commentVOBuilder(
-        commentMapper.updateComment(commentId, comment.getArticleId(), comment.getParentId(), comment.getContents()));
+  public Integer update(Integer commentId, Integer childId, CommentRetriveVO comment) {
+    return commentMapper.updateComment(commentId, comment.getContents());
   }
 
-  public Integer save(CommentRetriveVO comment) {
+  public Integer save(Integer articleId, Integer parentId, CommentRetriveVO comment) {
     // TODO from RetriveVO to VO
-
-    return commentMapper.saveComment(comment.getArticleId(), comment.getParentId(), comment.getContents());
+    Long createrId = 2L;
+    Integer res = commentMapper.saveComment(createrId, articleId, parentId,
+        comment.getContents());
+    return res;
   }
 
   public Integer delete(Integer id) {
     return commentMapper.deleteComment(id);
   }
 
-  // TODO 재귀함수 구현
-  public CommentVO commentVOBuilder(CommentDAO rawComment) {
-    List<CommentVO> childComments = new ArrayList<>();
-    if (rawComment.getParentId() != null) {
-      List<CommentDAO> rawChildCommentList = commentMapper.getCommentChildList(rawComment.getParentId());
-      for (CommentDAO rawChildComment : rawChildCommentList) {
-        childComments.add(childCommentVOBuilder(rawChildComment));
+  private CommentVO getParentComment(CommentDAO rawCommentDAO) {
+    List<CommentVO> childCommentList = new ArrayList<>();
+    if (rawCommentDAO.getParentId() == null) {
+      List<CommentDAO> rawChildCommentList = commentMapper.getCommentChildList(rawCommentDAO.getCommentId());
+      if (rawChildCommentList.size() > 0) {
+        for (CommentDAO rawChildComment : rawChildCommentList) {
+          childCommentList.add(commonCommentVOBuilder(rawChildComment, null));
+        }
       }
     }
-    // TODO Creater Mapper BY User ID
-    return CommentVO.builder().commentId(rawComment.getCommentId()).creater(null)
-        .createdAt(rawComment.getCreatedAt()).modifiedAt(rawComment.getModifiedAt()).childs(childComments).build();
+    return commonCommentVOBuilder(rawCommentDAO, childCommentList);
   }
 
-  public CommentVO childCommentVOBuilder(CommentDAO commentDao) {
-    // TODO Creater Mapper BY User ID
-    return CommentVO.builder().commentId(commentDao.getCommentId()).creater(null)
-        .createdAt(commentDao.getCreatedAt()).modifiedAt(commentDao.getModifiedAt()).build();
+  private CommentVO commonCommentVOBuilder(CommentDAO commentDao, List<CommentVO> childComment) {
+    UserEntity rawUser = userRepository.findById(commentDao.getCreatorId());
+    UserDto creater = UserDto.builder().name(rawUser.getUsername()).email(rawUser.getEmail())
+        .picture(rawUser.getPicture()).build();
+
+    return CommentVO.builder().commentId(commentDao.getCommentId()).creater(creater)
+        .createdAt(commentDao.getCreatedAt()).modifiedAt(commentDao.getModifiedAt())
+        .contents(commentDao.getContents()).childs(childComment)
+        .build();
   }
 
+  public Integer getCommentCntByArticleId(Integer articleId) {
+    return commentMapper.getCommentCnt(articleId);
+  }
 }

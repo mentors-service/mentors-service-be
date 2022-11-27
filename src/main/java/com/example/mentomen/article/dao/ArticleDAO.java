@@ -9,7 +9,7 @@ import lombok.Getter;
 @Getter
 public class ArticleDAO {
     private Integer articleId;
-    private Integer createrId;
+    private Long creatorId;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss z", timezone = "Asia/Seoul")
     private Date createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss z", timezone = "Asia/Seoul")
@@ -17,6 +17,8 @@ public class ArticleDAO {
     private String title;
     private String place;
     private String contents;
+    private String startDate;
+    private String endDate;
     private String status;
     private Integer totalRecruit;
 }

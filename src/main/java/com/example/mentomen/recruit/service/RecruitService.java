@@ -17,29 +17,35 @@ public class RecruitService {
     private RecruitMapper recruitMapper;
 
     // TODO Update Error Exception
-    public String updateRecruitStatus(Integer articleId, Integer userId) {
+    public String updateRecruitStatus(Integer articleId, Long userId) {
         if (delete(articleId, userId) == 0) {
             save(articleId, userId);
             return "Create Scrap";
+        } else {
+            return "Delete Scrap";
         }
-        return null;
     }
 
-    private Integer save(Integer articleId, Integer userId) {
-        return recruitMapper.saveRecruit(articleId, userId);
+    private Integer save(Integer articleId, Long userId) {
+        return recruitMapper.saveRecruit(userId, articleId);
     }
 
-    private Integer delete(Integer articleId, Integer userId) {
-        return recruitMapper.deleteRecruit(articleId, userId);
+    private Integer delete(Integer articleId, Long userId) {
+        return recruitMapper.deleteRecruit(userId, articleId);
     }
 
-    public RecruitVO recruitMemberBuilder(Integer articleId) {
+    public RecruitVO recruitMemberBuilder(Integer articleId, Long userId) {
         List<RecruitDAO> rawRecruitList = recruitMapper.getRecruitByArticleId(articleId);
-        List<Integer> createrIdList = new ArrayList<>();
+        List<Long> createrIdList = new ArrayList<>();
+        Boolean isJoined = false;
         for (RecruitDAO rawRecruit : rawRecruitList) {
             createrIdList.add(rawRecruit.getJoinUserId());
+            if (rawRecruit.getJoinUserId() == userId) {
+                isJoined = true;
+            }
         }
-        return RecruitVO.builder().articleId(articleId)
+        return RecruitVO.builder().isRecruited(isJoined)
                 .createrIdList(createrIdList).joinCnt(rawRecruitList.size()).build();
     }
+
 }

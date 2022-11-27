@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 
 @Data
 @Entity
-@NoArgsConstructor //파라미터가 없는 생성자를 생성한다.
+@NoArgsConstructor // 파라미터가 없는 생성자를 생성한다.
 public class UserEntity {
 
     @Id // primary key
@@ -22,15 +22,16 @@ public class UserEntity {
     private String username;
     private String password;
     private String email;
-    private String role; //ROLE_USER, ROLE_ADMIN
-
-    private String provider; //google
+    private String role; // ROLE_USER, ROLE_ADMIN
+    private String picture;
+    private String provider; // google
     private String providerId;
     @CreationTimestamp
     private Timestamp createDate;
 
     @Builder
-    public UserEntity(String username, String password, String email, String role, String provider, String providerId, Timestamp createDate) {
+    public UserEntity(String username, String password, String email, String role, String provider, String providerId,
+            Timestamp createDate) {
         this.username = username;
         this.password = password;
         this.email = email;

@@ -6,5 +6,5 @@ import lombok.Getter;
 public class ScrapDAO {
     private Integer scrapId;
     private Integer articleId;
-    private Integer scrapUserId;
+    private Long scrapUserId;
 }

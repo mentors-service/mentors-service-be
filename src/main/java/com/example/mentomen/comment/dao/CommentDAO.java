@@ -10,11 +10,12 @@ import lombok.Getter;
 public class CommentDAO {
     private Integer commentId;
     private Integer articleId;
-    private Integer createrId;
+    private Long creatorId;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss z", timezone = "Asia/Seoul")
     private Date createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss z", timezone = "Asia/Seoul")
     private Date modifiedAt;
     private String contents;
     private Integer parentId;
+    private Integer childId;
 }

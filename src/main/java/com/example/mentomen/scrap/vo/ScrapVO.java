@@ -8,7 +8,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ScrapVO {
+    private Boolean isScraped;
     private Integer articleId;
     private Integer scrapCnt;
-    private List<Integer> createrIdList;
+    private List<Long> createrIdList;
 }

@@ -1,6 +1,7 @@
 package com.example.mentomen.article.api;
 
 import com.example.mentomen.article.service.ArticleService;
+import com.example.mentomen.article.vo.ArticleRetriveVO;
 import com.example.mentomen.article.vo.ArticleVO;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,20 +19,14 @@ public class ArticleApiController {
   @CrossOrigin(origins = "*")
   @GetMapping
   public ResponseEntity<List<ArticleVO>> getArticleList(
-      @RequestParam(name = "limit") Integer limit, // 10개
       @RequestParam(name = "offset") Integer offset,
       @RequestParam(name = "searchObj") String searchObj,
-      @RequestParam(name = "searchVal") String searchVal,
-      @RequestParam(name = "orderObj") String orderObj,
-      @RequestParam(name = "orderBy") String orderBy) {
+      @RequestParam(name = "searchVal") String searchVal) {
     return ResponseEntity.ok(
         articleService.articles(
-            limit,
             offset,
             searchObj,
-            searchVal,
-            orderObj,
-            orderBy));
+            searchVal));
   }
 
   @CrossOrigin(origins = "*")
@@ -42,7 +37,7 @@ public class ArticleApiController {
 
   @CrossOrigin(origins = "*")
   @PostMapping
-  public ResponseEntity<String> saveArticle(@RequestBody ArticleVO article) {
+  public ResponseEntity<String> saveArticle(@RequestBody ArticleRetriveVO article) {
     Integer res = articleService.save(article);
     if (res == 1) {
       return ResponseEntity.ok().body("Success Save Article");

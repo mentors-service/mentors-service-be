@@ -6,5 +6,5 @@ import lombok.Getter;
 public class RecruitDAO {
     private Integer memberId;
     private Integer articleId;
-    private Integer joinUserId;
+    private Long joinUserId;
 }
