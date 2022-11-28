@@ -47,4 +47,5 @@ public class ScrapService {
         return ScrapVO.builder().articleId(articleId).isScraped(isScraped)
                 .createrIdList(createrIdList).scrapCnt(rawScrapList.size()).build();
     }
+    // TODO GET Article By userID
 }

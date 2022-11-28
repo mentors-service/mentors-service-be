@@ -14,13 +14,13 @@ import java.util.Date;
 public class JwtTokenProvider {
     public static final String tokenSecret = "926D96C90030DD58429D2751AC1BDBBC";
     public static final String tokenExpirationMsec = "86400000";
+
     public String create(Authentication authentication) {
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
 
-        System.out.println("principal.getUser().getEmail(): "+principal.getUser().getEmail());
         String jwtToken = JWT.create()
                 .withSubject(principal.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis()+JwtProperties.EXPIRATION_TIME))
+                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
                 .withClaim("email", principal.getUser().getEmail())
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 

@@ -41,20 +41,18 @@ public class CommentService {
     return comments;
   }
 
-  public Integer update(Integer commentId, Integer childId, CommentRetriveVO comment) {
-    return commentMapper.updateComment(commentId, comment.getContents());
+  public Integer update(Integer commentId, Integer childId, CommentRetriveVO comment, Long createrId) {
+    return commentMapper.updateComment(commentId, comment.getContents(), createrId);
   }
 
-  public Integer save(Integer articleId, Integer parentId, CommentRetriveVO comment) {
-    // TODO from RetriveVO to VO
-    Long createrId = 2L;
+  public Integer save(Integer articleId, Integer parentId, CommentRetriveVO comment, Long createrId) {
     Integer res = commentMapper.saveComment(createrId, articleId, parentId,
         comment.getContents());
     return res;
   }
 
-  public Integer delete(Integer id) {
-    return commentMapper.deleteComment(id);
+  public Integer delete(Integer id, Long createrId) {
+    return commentMapper.deleteComment(id, createrId);
   }
 
   private CommentVO getParentComment(CommentDAO rawCommentDAO) {
@@ -72,10 +70,11 @@ public class CommentService {
 
   private CommentVO commonCommentVOBuilder(CommentDAO commentDao, List<CommentVO> childComment) {
     UserEntity rawUser = userRepository.findById(commentDao.getCreatorId());
-    UserDto creater = UserDto.builder().name(rawUser.getUsername()).email(rawUser.getEmail())
-        .picture(rawUser.getPicture()).build();
+    // UserDto creater =
+    // UserDto.builder().name(rawUser.getUsername()).email(rawUser.getEmail())
+    // .picture(rawUser.getPicture()).build();
 
-    return CommentVO.builder().commentId(commentDao.getCommentId()).creater(creater)
+    return CommentVO.builder().commentId(commentDao.getCommentId()).creater(null)
         .createdAt(commentDao.getCreatedAt()).modifiedAt(commentDao.getModifiedAt())
         .contents(commentDao.getContents()).childs(childComment)
         .build();

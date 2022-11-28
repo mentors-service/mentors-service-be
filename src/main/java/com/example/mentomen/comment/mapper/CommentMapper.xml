@@ -71,18 +71,23 @@
         #{contents}, 
         now(),
         now()
-        )
-        RETURNING comment_id;
+        );
   </insert>
   <update id="updateComment">
     UPDATE comment
     SET
     contents=#{contents, jdbcType=VARCHAR},
     modified_at=now()
-    WHERE comment_id=#{comment_id};
+    WHERE 
+    1=1
+    AND comment_id=#{comment_id}
+    AND creator_id=#{creator_id};
   </update>
-  <delete id="deleteComment" parameterType="Integer">
+  <delete id="deleteComment">
     DELETE FROM comment
-    WHERE comment_id = #{comment_id}
+    WHERE 
+    1=1
+    AND comment_id=#{comment_id}
+    AND creator_id=#{creator_id};
   </delete>
 </mapper>

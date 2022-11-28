@@ -6,10 +6,10 @@
     <result property="joinUserId" column="join_user_id" />
   </resultMap>
   <select id="getRecruitByUserId" resultType="com.example.mentomen.recruit.dao.RecruitDAO" resultMap="recruit">
-    SELECT
-      member_id,
-      article_id,
-      join_user_id
+    SELECT 
+      member_id, 
+      article_id, 
+      join_user_id 
     FROM
       member
     WHERE

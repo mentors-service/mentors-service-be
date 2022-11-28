@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
+
 import java.sql.Timestamp;
 
 @Data
@@ -29,6 +31,10 @@ public class UserEntity {
     @CreationTimestamp
     private Timestamp createDate;
 
+    @NotBlank
+    private String nickname;
+    private String discription;
+
     @Builder
     public UserEntity(String username, String password, String email, String role, String provider, String providerId,
             Timestamp createDate) {
@@ -39,6 +45,13 @@ public class UserEntity {
         this.provider = provider;
         this.providerId = providerId;
         this.createDate = createDate;
+        this.nickname = username;
+        this.discription = null;
     }
 
+    public void update(String nickname, String discription) {
+        this.nickname = nickname;
+        if (discription != null)
+            this.discription = discription;
+    }
 }

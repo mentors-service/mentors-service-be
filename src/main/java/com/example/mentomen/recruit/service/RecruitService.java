@@ -47,5 +47,5 @@ public class RecruitService {
         return RecruitVO.builder().isRecruited(isJoined)
                 .createrIdList(createrIdList).joinCnt(rawRecruitList.size()).build();
     }
-
+    // TODO Add Article Status Check Logic
 }

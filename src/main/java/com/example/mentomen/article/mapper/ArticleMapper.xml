@@ -26,8 +26,14 @@
       total_recruit
     FROM
       article
-    WHERE
-      #{searchObj} = #{searchVal}
+      WHERE
+      1=1
+    <if test="createrId != null">
+        AND creator_id = #{createrId}
+      </if>
+    <if test="searchObj != null">
+        AND #{searchObj} = #{searchVal}
+      </if>
     ORDER BY
       created_at
     LIMIT 10 
@@ -49,7 +55,7 @@
     FROM
       article
     WHERE
-      article_id = #{id}
+      article_id = #{articleId}
   </select>
   <insert id="saveArticle">
     INSERT INTO 
@@ -80,9 +86,27 @@
         #{totalMember}
         )
     </insert>
-  <update id="updateArticle"></update>
-  <delete id="deleteArticle" parameterType="Integer">
+  <update id="updateArticle">
+    UPDATE article
+    SET
+    title=#{title, jdbcType=VARCHAR}, 
+    place=#{place, jdbcType=VARCHAR}, 
+    contents=#{contents, jdbcType=VARCHAR},
+    start_date=#{startDate, jdbcType=VARCHAR},
+    end_date=#{endDate, jdbcType=VARCHAR},
+    modified_at=now(),
+    status=#{status},
+    total_recruit=#{totalMember}
+    WHERE 
+    1=1
+    AND article_id=#{articleId}
+    AND creator_id=#{createrId};
+  </update>
+  <delete id="deleteArticle">
     DELETE FROM article
-    WHERE id = #{articleId}
+    WHERE 
+    1=1
+    AND article_id = #{articleId}
+    AND creator_id=#{createrId};
   </delete>
 </mapper>

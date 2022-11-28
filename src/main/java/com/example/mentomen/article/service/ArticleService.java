@@ -6,12 +6,9 @@ import com.example.mentomen.article.mapper.ArticleMapper;
 import com.example.mentomen.article.vo.ArticleRetriveVO;
 import com.example.mentomen.article.vo.ArticleVO;
 import com.example.mentomen.comment.service.CommentService;
-import com.example.mentomen.comment.vo.CommentVO;
 import com.example.mentomen.member.dto.UserDto;
-import com.example.mentomen.member.entity.UserEntity;
-import com.example.mentomen.member.repository.UserRepository;
+import com.example.mentomen.member.service.UserService;
 import com.example.mentomen.recruit.service.RecruitService;
-import com.example.mentomen.recruit.vo.RecruitVO;
 import com.example.mentomen.scrap.service.ScrapService;
 
 import java.util.ArrayList;
@@ -28,7 +25,7 @@ public class ArticleService {
   private ArticleMapper articleMapper;
 
   @Autowired
-  private UserRepository userRepository;
+  private UserService userService;
 
   @Autowired
   private CommentService commentService;
@@ -40,6 +37,23 @@ public class ArticleService {
   private ScrapService scrapService;
 
   @Transactional(readOnly = true)
+  public List<ArticleVO> articlesByUserId(
+      Integer offset,
+      String searchObj,
+      String searchVal,
+      Long userId) {
+    List<ArticleVO> articleList = new ArrayList<>();
+    List<ArticleDAO> rawArticleList = articleMapper.getArticleList(
+        offset,
+        searchObj,
+        searchVal,
+        userId);
+    for (ArticleDAO rawArticle : rawArticleList) {
+      articleList.add(articleVOBuilderFromDto(rawArticle));
+    }
+    return articleList;
+  }
+
   public List<ArticleVO> articles(
       Integer offset,
       String searchObj,
@@ -48,7 +62,8 @@ public class ArticleService {
     List<ArticleDAO> rawArticleList = articleMapper.getArticleList(
         offset,
         searchObj,
-        searchVal);
+        searchVal,
+        null);
     for (ArticleDAO rawArticle : rawArticleList) {
       articleList.add(articleVOBuilderFromDto(rawArticle));
     }
@@ -61,31 +76,34 @@ public class ArticleService {
     return articleVOBuilderFromDto(rawArticle);
   }
 
-  public ArticleVO update(Integer id) {
-    return articleMapper.updateArticle(id);
+  // TODO Article Status Change
+  public Integer update(Integer id, ArticleRetriveVO article, Long createrId) {
+    return articleMapper.updateArticle(id, article.getTitle(), article.getPlace(), article.getStartDate(),
+        article.getEndDate(), article.getContents(), ArticleStatusCode.ARTICLE_INPROGRESS.getCode(),
+        article.getTotalMember(), createrId);
   }
 
-  public Integer save(ArticleRetriveVO articleVO) {
-    Long createrId = 2L;
+  public Integer save(ArticleRetriveVO articleVO, Long createrId) {
     // TODO Extract UserID from token
     return articleMapper.saveArticle(articleVO.getTitle(), articleVO.getPlace(), articleVO.getStartDate(),
         articleVO.getEndDate(), articleVO.getContents(), ArticleStatusCode.ARTICLE_INPROGRESS.getCode(),
         articleVO.getTotalMember(), createrId);
   }
 
-  public Integer delete(Integer id) {
-    return articleMapper.deleteArticle(id);
+  public Integer delete(Integer id, Long createrId) {
+    return articleMapper.deleteArticle(id, createrId);
   }
 
   private ArticleVO articleVOBuilderFromDto(ArticleDAO rawArticle) {
-    UserEntity rawUser = userRepository.findById(rawArticle.getCreatorId());
-    UserDto creater = UserDto.builder().name(rawUser.getUsername()).email(rawUser.getEmail())
-        .picture(rawUser.getPicture()).build();
+    UserDto rawUser = userService.findById(rawArticle.getCreatorId());
+    // UserDto creater =
+    // UserDto.builder().name(rawUser.getUsername()).email(rawUser.getEmail())
+    // .picture(rawUser.getPicture()).build();
     return ArticleVO.builder().articleId(rawArticle.getArticleId())
         .createdAt(rawArticle.getCreatedAt())
         .modifiedAt(rawArticle.getModifiedAt()).title(rawArticle.getTitle()).place(rawArticle.getPlace())
         .startDate(rawArticle.getStartDate()).endDate(rawArticle.getEndDate()).contents(rawArticle.getContents())
-        .creater(creater).status(ArticleStatusCode.parseCode(rawArticle.getStatus()))
+        .creater(rawUser).status(ArticleStatusCode.parseCode(rawArticle.getStatus()))
         .comments(commentService.comments(rawArticle.getArticleId(), null))
         .recruit(recruitService.recruitMemberBuilder(rawArticle.getArticleId(), rawArticle.getCreatorId()))
         .scraps(scrapService.scrapBuilderByArticle(rawArticle.getArticleId(), rawArticle.getCreatorId()))

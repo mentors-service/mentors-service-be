@@ -72,9 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                                 Authentication authentication) throws IOException, ServletException {
                             String token = tokenProvider.create(authentication);
                             // response.addHeader("Authorization", "Bearer " + token);
-                            System.out.println("헤더에 토큰넣어");
                             String url = makeRedirectUrl(token);
-                            System.out.println("url: " + url);
                             RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
                             redirectStrategy.sendRedirect(request, response, url);
 
