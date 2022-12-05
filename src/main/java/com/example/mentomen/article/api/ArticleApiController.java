@@ -43,7 +43,6 @@ public class ArticleApiController {
       @RequestParam(name = "searchVal", required = false) String searchVal,
       Authentication authentication) {
     if ((PrincipalDetails) authentication.getPrincipal() != null) {
-
       PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
       return ResponseEntity.ok(
           articleService.articlesByUserId(
