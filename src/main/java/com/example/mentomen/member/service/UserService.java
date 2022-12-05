@@ -30,6 +30,14 @@ public class UserService {
         return new UserDto(user);
     }
 
+    @Transactional(readOnly = true)
+    public UserDto findById(Long userId) {
+
+        UserEntity user = userRepository.findById(userId);
+
+        return new UserDto(user);
+    }
+
     public void update(String email, UserDto userDto) {
 
         UserEntity user = userRepository.findByEmail(email);

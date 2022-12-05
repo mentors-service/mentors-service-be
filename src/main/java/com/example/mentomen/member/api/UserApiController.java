@@ -23,27 +23,31 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value="/api/profile")
 public class UserApiController {
 
     private final UserService userService;
     private final ArticleService articleService;
-    @GetMapping
-    public String myArticles(Authentication authentication) {
-        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
 
-        List<ArticleResponseDto> articles = articleService.myArticles(principal.getUsername());
+    @GetMapping("/api/profile/{id}")
+    public String userProfile(@PathVariable Long id) {
+
+        List<ArticleResponseDto> articles = articleService.userProfile(id);
+
         JsonObject obj = new JsonObject();
         JsonArray jsonArray = new JsonArray();
+
         for (ArticleResponseDto article : articles) {
+
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("title", article.getTitle());
             jsonObject.addProperty("content", article.getContent());
 
             jsonArray.add(jsonObject);
         }
-        UserDto userDto= userService.findByEmail(principal.getUsername());
 
+        UserDto userDto= userService.findById(id);
+
+        System.out.println("UserDto: "+userDto.getNickname());
         obj.addProperty("nickname", userDto.getNickname());
         obj.addProperty("discription", userDto.getDiscription());
 
@@ -52,9 +56,17 @@ public class UserApiController {
         return obj.toString();
     }
 
-    @PatchMapping
+    @PatchMapping("/api/users")
     public void update(@Valid @RequestBody UserDto userDto, Authentication authentication) {
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
         userService.update(principal.getUsername(),userDto);
     }
+
+    @GetMapping("/api/users")
+    public UserDto user(Authentication authentication) {
+        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
+
+        return userService.findByEmail(principal.getUser().getEmail());
+    }
+
 }

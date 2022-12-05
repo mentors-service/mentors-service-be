@@ -40,7 +40,6 @@ public class ArticleService {
         return new ArticleResponseDto(article);
     }
 
-
     public Long save(ArticleRequestDto requestDto,String email) {
 
         Article article = requestDto.toEntity();
@@ -71,6 +70,19 @@ public class ArticleService {
     public List<ArticleResponseDto> myArticles(String username) {
 
         return articleRepository.findByUserEmail(username)
+                .stream()
+                .map(ArticleResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ArticleResponseDto> userProfile(Long userId) {
+
+        System.out.println("List<ArticleResponseDto>: "+ articleRepository.findByUserId(userId)
+                .stream()
+                .map(ArticleResponseDto::new)
+                .collect(Collectors.toList()));
+        return articleRepository.findByUserId(userId)
                 .stream()
                 .map(ArticleResponseDto::new)
                 .collect(Collectors.toList());

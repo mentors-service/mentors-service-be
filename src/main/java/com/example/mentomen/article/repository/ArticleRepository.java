@@ -12,4 +12,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     @Query("select a from Article a join fetch a.user where a.user.email = email")
     List<Article> findByUserEmail(@Param("email") String email);
 
+    @Query("select a from Article a join fetch a.user where a.user.id = :userId")
+    List<Article> findByUserId(@Param("userId") Long userId);
 }

@@ -9,7 +9,9 @@ public class UserDto {
 
     private String nickname;
     private String discription;
+
     public UserDto(UserEntity user) {
+
         this.nickname=user.getNickname();
         this.discription=user.getDiscription();
     }

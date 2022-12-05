@@ -5,19 +5,15 @@ import com.example.mentomen.member.config.jwt.JwtTokenProvider;
 import com.example.mentomen.member.config.oauth.PrincipalOauth2UserService;
 import com.example.mentomen.member.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -28,7 +24,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLEncoder;
 
 @Configuration // IoC 빈(bean)을 등록
 @EnableWebSecurity // 스프링 시큐리티 필터가 스프링 필터체인에 등록됨
@@ -42,7 +37,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CorsConfig corsConfig;
     private final UserRepository userRepository;
     private final JwtTokenProvider tokenProvider;
-
+    private final JwtExceptionFilter jwtExceptionFilter;
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring()
+                .antMatchers("/api/articles");
+    }
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -53,11 +53,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.formLogin().disable();
         http.httpBasic().disable();
-        http.addFilter(new JwtCommonAuthorizationFilter(authenticationManager(), tokenProvider, userRepository));
 
+        http.addFilter(new JwtCommonAuthorizationFilter(authenticationManager(), tokenProvider, userRepository));
+        http.addFilterBefore(jwtExceptionFilter, JwtCommonAuthorizationFilter.class);
         http.authorizeRequests()
-                .antMatchers("/api/profile/**").access("hasRole('ROLE_USER')")
-                .antMatchers("/h2-console/**").permitAll()
+                .antMatchers("/api/users/**").access("hasRole('ROLE_USER')")
+               .antMatchers("/h2-console/**").permitAll()
                 .anyRequest().permitAll()
                 .and()
                 .oauth2Login()
