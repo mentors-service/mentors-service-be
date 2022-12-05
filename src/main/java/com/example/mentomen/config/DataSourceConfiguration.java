@@ -37,12 +37,12 @@ public class DataSourceConfiguration {
     return dataSourceBuilder.build();
   }
 
-  @Bean
-  @Autowired
-  public DataSourceTransactionManager dataSourceTransactionManager(
-      @Qualifier("dataSource") DataSource datasource) {
-    return new DataSourceTransactionManager(datasource);
-  }
+  // @Bean
+  // @Autowired
+  // public DataSourceTransactionManager dataSourceTransactionManager(
+  // @Qualifier("dataSource") DataSource datasource) {
+  // return new DataSourceTransactionManager(datasource);
+  // }
 
   @Bean
   public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {

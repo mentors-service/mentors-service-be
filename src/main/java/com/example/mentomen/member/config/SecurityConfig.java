@@ -1,6 +1,7 @@
 package com.example.mentomen.member.config;
 
 import com.example.mentomen.member.config.jwt.JwtCommonAuthorizationFilter;
+import com.example.mentomen.member.config.jwt.JwtExceptionFilter;
 import com.example.mentomen.member.config.jwt.JwtTokenProvider;
 import com.example.mentomen.member.config.oauth.PrincipalOauth2UserService;
 import com.example.mentomen.member.repository.UserRepository;
@@ -40,9 +41,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CorsConfig corsConfig;
     private final UserRepository userRepository;
     private final JwtTokenProvider tokenProvider;
+    private final JwtExceptionFilter jwtExceptionFilter;
 
     @Value("${server.security.enabled}")
     private Boolean springSecurityEnabled;
+
+    @Value("${server.oauth.redirectUrl}")
+    private String redirectUrl;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -54,10 +59,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             http.formLogin().disable();
             http.httpBasic().disable();
             http.addFilter(new JwtCommonAuthorizationFilter(authenticationManager(), tokenProvider, userRepository));
-
+            http.addFilterBefore(jwtExceptionFilter, JwtCommonAuthorizationFilter.class);
             http.authorizeRequests()
-                    .antMatchers("/user/**").access("hasRole('ROLE_USER')")
-                    .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
+                    .antMatchers("/api/users/**").access("hasRole('ROLE_USER')")
                     .antMatchers("/h2-console/**").permitAll()
                     .anyRequest().permitAll()
                     .and()
@@ -92,7 +96,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private String makeRedirectUrl(String token) {
-        return UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/kakao?token=" + token)
+        return UriComponentsBuilder.fromUriString("http://" + redirectUrl + "/oauth2/kakao?token=" + token)
                 .build().toUriString();
     }
 }
