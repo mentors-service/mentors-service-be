@@ -1,0 +1,93 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mentomen.comment.mapper.CommentMapper">
+  <resultMap id="comment" type="com.example.mentomen.comment.dao.CommentDAO">
+    <id property="commentId" column="comment_id" />
+    <result property="articleId" column="article_id" />
+    <result property="creatorId" column="creator_id" />
+    <result property="parentId" column="parent_id" />
+    <result property="contents" column="contents" />
+    <result property="createdAt" column="created_at" />
+    <result property="modifiedAt" column="modified_at" />
+  </resultMap>
+  <select id="getCommentList" resultType="com.example.mentomen.comment.dao.CommentDAO" resultMap="comment">
+    SELECT
+      comment_id,
+      article_id,
+      creator_id,
+      parent_id,
+      contents,
+      created_at,
+      modified_at
+    FROM
+      comment
+    WHERE
+      1=1
+    <if test="article_id != null">
+        AND article_id = #{article_id}
+      </if>
+    <if test="user_id != null">
+        AND creator_id = #{user_id}
+      </if>
+    ;
+  </select>
+  <select id="getCommentChildList" resultType="com.example.mentomen.comment.dao.CommentDAO" resultMap="comment">
+    SELECT
+      comment_id,
+      article_id,
+      creator_id,
+      parent_id,
+      contents,
+      created_at,
+      modified_at
+    FROM
+      comment
+    WHERE
+    parent_id = #{parent_id};
+  </select>
+  <select id="getCommentCnt" resultType="Integer">
+    SELECT
+      COUNT(*)
+    FROM
+      comment
+    WHERE
+    article_id = #{article_id};
+  </select>
+  <insert id="saveComment">
+    INSERT INTO 
+      comment
+      (
+        creator_id,
+        article_id,
+        parent_id,
+        contents,
+        created_at,
+        modified_at
+        )
+      VALUES 
+      (
+        #{creator_id}, 
+        #{article_id}, 
+        #{parent_id, jdbcType=INTEGER}, 
+        #{contents}, 
+        now(),
+        now()
+        );
+  </insert>
+  <update id="updateComment">
+    UPDATE comment
+    SET
+    contents=#{contents, jdbcType=VARCHAR},
+    modified_at=now()
+    WHERE 
+    1=1
+    AND comment_id=#{comment_id}
+    AND creator_id=#{creator_id};
+  </update>
+  <delete id="deleteComment">
+    DELETE FROM comment
+    WHERE 
+    1=1
+    AND comment_id=#{comment_id}
+    AND creator_id=#{creator_id};
+  </delete>
+</mapper>

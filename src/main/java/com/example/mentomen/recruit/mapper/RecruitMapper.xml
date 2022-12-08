@@ -1,0 +1,57 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mentomen.recruit.mapper.RecruitMapper">
+  <resultMap id="recruit" type="com.example.mentomen.recruit.dao.RecruitDAO">
+    <id property="memberId" column="member_id" />
+    <result property="articleId" column="article_id" />
+    <result property="joinUserId" column="join_user_id" />
+  </resultMap>
+  <select id="getRecruitByUserId" resultType="com.example.mentomen.recruit.dao.RecruitDAO" resultMap="recruit">
+    SELECT 
+      member_id, 
+      article_id, 
+      join_user_id 
+    FROM
+      member
+    WHERE
+      join_user_id = #{user_id};
+  </select>
+  <select id="getRecruitByArticleId" resultType="com.example.mentomen.recruit.dao.RecruitDAO" resultMap="recruit">
+    SELECT
+      member_id,
+      article_id,
+      join_user_id
+    FROM
+    member
+    WHERE
+      article_id = #{article_id};
+  </select>
+  <select id="getRecruitByArticleIdAndUserId" resultType="com.example.mentomen.recruit.dao.RecruitDAO" resultMap="recruit">
+    SELECT
+      member_id,
+      article_id,
+      join_user_id
+    FROM
+    member
+    WHERE
+    1=1
+    AND  article_id = #{article_id}
+    AND  join_user_id = #{user_id};
+  </select>
+  <insert id="saveRecruit">
+    INSERT INTO 
+    member
+      (
+        article_id,
+        join_user_id
+        )
+      VALUES 
+      (
+        #{article_id}, 
+        #{user_id}
+        );
+    </insert>
+  <delete id="deleteRecruit">
+    DELETE FROM member
+    WHERE 1=1 AND article_id = #{article_id} AND join_user_id = #{user_id};
+  </delete>
+</mapper>

@@ -1,0 +1,125 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mentomen.article.mapper.ArticleMapper">
+  <resultMap id="article" type="com.example.mentomen.article.dao.ArticleDAO">
+    <id property="articleId" column="article_id" />
+    <result property="creatorId" column="creator_id" />
+    <result property="createdAt" column="created_at" />
+    <result property="modifiedAt" column="modified_at" />
+    <result property="title" column="title" />
+    <result property="place" column="place" />
+    <result property="contents" column="contents" />
+    <result property="startDate" column="start_date" />
+    <result property="endDate" column="end_date" />
+    <result property="status" column="status" />
+    <result property="totalRecruit" column="total_recruit" />
+  </resultMap>
+  <select id="getArticleList" resultType="com.example.mentomen.article.dao.ArticleDAO" resultMap="article">
+    SELECT 
+      article_id,
+      title,
+      place,
+      contents,
+      created_at,
+      creator_id,
+      modified_at,
+      status,
+      total_recruit
+    FROM
+      article
+      WHERE
+      1=1
+    <if test="createrId != null">
+        AND creator_id = #{createrId}
+      </if>
+    <if test="searchObj != null">
+        AND #{searchObj} = #{searchVal}
+      </if>
+    ORDER BY
+      created_at DESC
+    LIMIT 10 
+    OFFSET (#{offset}-1)*10
+  </select>
+  <select id="getArticle" resultType="com.example.mentomen.article.dao.ArticleDAO" resultMap="article">
+    SELECT 
+      article_id,
+      title,
+      place,
+      contents,
+      start_date,
+      end_date,
+      created_at,
+      creator_id,
+      modified_at,
+      status,
+      total_recruit
+    FROM
+      article
+    WHERE
+      article_id = #{articleId}
+  </select>
+  <select id="getArticleTotalCnt" resultType="String">
+    SELECT 
+      count(*)
+    FROM
+      article
+  </select>
+  <insert id="saveArticle">
+    INSERT INTO 
+      article
+      (
+        title,
+        place,
+        contents,
+        start_date,
+        end_date,
+        created_at,
+        creator_id,
+        modified_at, 
+        status,
+        total_recruit
+        )
+      VALUES 
+      (
+        #{title}, 
+        #{place}, 
+        #{contents}, 
+        #{startDate},
+        #{endDate},
+        now(),
+        #{userId}, 
+        now(),
+        #{status},
+        #{totalRecruit}
+        )
+    </insert>
+  <update id="updateArticle">
+    UPDATE article
+    SET
+    title=#{title, jdbcType=VARCHAR}, 
+    place=#{place, jdbcType=VARCHAR}, 
+    contents=#{contents, jdbcType=VARCHAR},
+    start_date=#{startDate, jdbcType=VARCHAR},
+    end_date=#{endDate, jdbcType=VARCHAR},
+    modified_at=now(),
+    total_recruit=#{totalRecruit}
+    WHERE 
+    1=1
+    AND article_id=#{articleId}
+    AND creator_id=#{createrId};
+  </update>
+  <update id="updateArticleStatus">
+    UPDATE article
+    SET
+    status=#{status},
+    WHERE 
+    1=1
+    AND article_id=#{articleId}
+  </update>
+  <delete id="deleteArticle">
+    DELETE FROM article
+    WHERE 
+    1=1
+    AND article_id = #{articleId}
+    AND creator_id=#{createrId};
+  </delete>
+</mapper>

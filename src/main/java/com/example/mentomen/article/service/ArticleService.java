@@ -1,65 +1,116 @@
 package com.example.mentomen.article.service;
 
-import com.example.mentomen.article.dto.ArticleRequestDto;
-import com.example.mentomen.article.dto.ArticleResponseDto;
-import com.example.mentomen.article.entity.Article;
-import com.example.mentomen.article.repository.ArticleRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import com.example.mentomen.article.code.ArticleStatusCode;
+import com.example.mentomen.article.dao.ArticleDAO;
+import com.example.mentomen.article.mapper.ArticleMapper;
+import com.example.mentomen.article.vo.ArticleListVO;
+import com.example.mentomen.article.vo.ArticleRetriveVO;
+import com.example.mentomen.article.vo.ArticleVO;
+import com.example.mentomen.comment.service.CommentService;
+import com.example.mentomen.member.dto.UserDto;
+import com.example.mentomen.member.service.UserService;
+import com.example.mentomen.recruit.service.RecruitService;
+import com.example.mentomen.scrap.service.ScrapService;
+
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-@Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class ArticleService {
 
-    private final ArticleRepository articleRepository;
+  @Autowired
+  private ArticleMapper articleMapper;
 
-    @Transactional(readOnly = true)
-    public List<ArticleResponseDto> articles() {
+  @Autowired
+  private UserService userService;
 
-        return articleRepository.findAll()
-                .stream()
-                .map(article -> new ArticleResponseDto(article))
-                .collect(Collectors.toList());
+  @Autowired
+  private CommentService commentService;
+
+  @Autowired
+  private RecruitService recruitService;
+
+  @Autowired
+  private ScrapService scrapService;
+
+  @Transactional(readOnly = true)
+  public List<ArticleVO> articlesByUserId(
+      Integer offset,
+      String searchObj,
+      String searchVal,
+      Long userId) {
+    List<ArticleVO> articleList = new ArrayList<>();
+    List<ArticleDAO> rawArticleList = articleMapper.getArticleList(
+        offset,
+        searchObj,
+        searchVal,
+        userId);
+    for (ArticleDAO rawArticle : rawArticleList) {
+      articleList.add(articleVOBuilderFromDto(rawArticle, userId));
     }
+    return articleList;
+  }
 
-    @Transactional(readOnly = true)
-    public ArticleResponseDto findById(Long id) {
-
-        Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("게시글 조회 실패! 게시글이 없습니다."));
-
-        return new ArticleResponseDto(article);
+  // no Auth Article List -> TODO
+  public ArticleListVO articles(
+      Integer offset,
+      String searchObj,
+      String searchVal,
+      Long userId) {
+    List<ArticleVO> articleList = new ArrayList<>();
+    List<ArticleDAO> rawArticleList = articleMapper.getArticleList(
+        offset,
+        searchObj,
+        searchVal,
+        null);
+    for (ArticleDAO rawArticle : rawArticleList) {
+      articleList.add(articleVOBuilderFromDto(rawArticle, userId));
     }
+    // TODO : pagenation invaild처리 if current > totalpage 에러처리해야함.
+    return ArticleListVO.builder().data(articleList).currentPage(offset)
+        .totalPages(Integer.valueOf(articleMapper.getArticleTotalCnt()) / 10).build();
+  }
 
+  @Transactional(readOnly = true)
+  public ArticleVO findById(Integer id, Long userId) {
+    ArticleDAO rawArticle = articleMapper.getArticle(id);
+    return articleVOBuilderFromDto(rawArticle, userId);
+  }
 
-    public Long save(ArticleRequestDto requestDto) {
+  // TODO Article Status Change
+  public Integer update(Integer id, ArticleRetriveVO article, Long createrId) {
+    return articleMapper.updateArticle(id, article.getTitle(), article.getPlace(), article.getStartDate(),
+        article.getEndDate(), article.getContents(),
+        article.getTotalRecruit(), createrId);
+  }
 
-        return articleRepository.save(requestDto.toEntity()).getId();
-    }
+  public Integer save(ArticleRetriveVO articleVO, Long createrId) {
+    // TODO Extract UserID from token
+    return articleMapper.saveArticle(articleVO.getTitle(), articleVO.getPlace(), articleVO.getStartDate(),
+        articleVO.getEndDate(), articleVO.getContents(), ArticleStatusCode.ARTICLE_INPROGRESS.getCode(),
+        articleVO.getTotalRecruit(), createrId);
+  }
 
-    public Long update(Long id, ArticleRequestDto requestDto) {
+  public Integer delete(Integer id, Long createrId) {
+    return articleMapper.deleteArticle(id, createrId);
+  }
 
-        Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("게시글 수정 실패! 게시글 댓글이 없습니다." + id));
-
-        article.update(requestDto.getTitle(),requestDto.getContent());
-
-        return id;
-    }
-
-    public void delete(Long id) {
-
-        Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("게시글 삭제 실패! 게시글 댓글이 없습니다." + id));
-
-        articleRepository.delete(article);
-    }
-
+  private ArticleVO articleVOBuilderFromDto(ArticleDAO rawArticle, Long userId) {
+    UserDto rawUser = userService.findById(rawArticle.getCreatorId());
+    return ArticleVO.builder().articleId(rawArticle.getArticleId())
+        .createdAt(rawArticle.getCreatedAt())
+        .modifiedAt(rawArticle.getModifiedAt()).title(rawArticle.getTitle()).place(rawArticle.getPlace())
+        .startDate(rawArticle.getStartDate()).endDate(rawArticle.getEndDate()).contents(rawArticle.getContents())
+        .creater(rawUser).status(ArticleStatusCode.parseCode(rawArticle.getStatus()))
+        .comments(commentService.comments(rawArticle.getArticleId(), null))
+        .recruit(recruitService.recruitMemberBuilder(rawArticle.getArticleId(), userId))
+        .totalRecruit(rawArticle.getTotalRecruit())
+        .scraps(scrapService.scrapBuilderByArticle(rawArticle.getArticleId(), userId))
+        .commentCnt(commentService.getCommentCntByArticleId(rawArticle.getArticleId()))
+        .build();
+  }
 }

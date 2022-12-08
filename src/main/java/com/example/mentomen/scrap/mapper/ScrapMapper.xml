@@ -1,0 +1,45 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mentomen.scrap.mapper.ScrapMapper">
+  <resultMap id="scrap" type="com.example.mentomen.scrap.dao.ScrapDAO">
+    <id property="scrapId" column="scrap_id" />
+    <result property="articleId" column="article_id" />
+    <result property="scrapUserId" column="scrap_user_id" />
+  </resultMap>
+  <select id="getScrapByUserId" resultType="com.example.mentomen.scrap.dao.ScrapDAO" resultMap="scrap">
+    SELECT
+      scrap_id,
+      article_id,
+      scrap_user_id
+    FROM
+      scrap
+    WHERE
+      scrap_user_id = #{user_id};
+  </select>
+  <select id="getScrapByArticleId" resultType="com.example.mentomen.scrap.dao.ScrapDAO" resultMap="scrap">
+    SELECT
+      scrap_id,
+      article_id,
+      scrap_user_id
+    FROM
+      scrap
+    WHERE
+      article_id = #{article_id};
+  </select>
+  <insert id="saveScrap">
+    INSERT INTO 
+      scrap
+      (
+        article_id,
+        scrap_user_id
+        )
+      VALUES 
+      (
+        #{article_id}, 
+        #{user_id}
+        );
+    </insert>
+  <delete id="deleteScrap">
+    DELETE FROM scrap
+    WHERE 1=1 AND article_id = #{article_id} AND scrap_user_id = #{user_id};
+  </delete>
+</mapper>
