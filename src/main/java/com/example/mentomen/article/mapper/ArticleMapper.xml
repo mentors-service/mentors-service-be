@@ -110,7 +110,7 @@
   <update id="updateArticleStatus">
     UPDATE article
     SET
-    status=#{status},
+    status=#{status}
     WHERE 
     1=1
     AND article_id=#{articleId}
