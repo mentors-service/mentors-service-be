@@ -10,6 +10,6 @@ public class ArticleRetriveVO {
     private String place;
     private String startDate;
     private String endDate;
-    private Integer totalMember;
+    private Integer totalRecruit;
     private String contents;
 }

@@ -14,7 +14,11 @@ public interface ArticleMapper {
                         @Param("searchVal") String searchVal,
                         @Param("createrId") Long createrId);
 
+        String getArticleTotalCnt();
+
         ArticleDAO getArticle(@Param("articleId") Integer id);
+
+        int updateArticleStatus(@Param("articleId") Integer id, @Param("status") String status);
 
         int updateArticle(@Param("articleId") Integer id,
                         @Param("title") String title,
@@ -22,8 +26,7 @@ public interface ArticleMapper {
                         @Param("startDate") String startDate,
                         @Param("endDate") String endDate,
                         @Param("contents") String contents,
-                        @Param("status") String status,
-                        @Param("totalMember") Integer totalMember,
+                        @Param("totalRecruit") Integer totalRecruit,
                         @Param("createrId") Long createrId);
 
         int saveArticle(
@@ -33,7 +36,7 @@ public interface ArticleMapper {
                         @Param("endDate") String endDate,
                         @Param("contents") String contents,
                         @Param("status") String status,
-                        @Param("totalMember") Integer totalMember,
+                        @Param("totalRecruit") Integer totalRecruit,
                         @Param("userId") Long userId);
 
         int deleteArticle(@Param("articleId") Integer adaptorId, @Param("createrId") Long createrId);

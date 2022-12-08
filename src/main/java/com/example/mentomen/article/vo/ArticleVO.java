@@ -30,6 +30,7 @@ public class ArticleVO {
   private String contents;
   private ScrapVO scraps;
   private RecruitVO recruit;
+  private Integer totalRecruit;
   private List<CommentVO> comments;
 
   private Integer commentCnt; // 댓글 + 대댓글.

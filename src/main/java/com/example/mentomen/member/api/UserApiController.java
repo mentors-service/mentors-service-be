@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ public class UserApiController {
     private final UserService userService;
     private final ArticleService articleService;
 
+    @CrossOrigin(origins = "*")
     @GetMapping
     public UserDto myArticles(Authentication authentication) {
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
@@ -33,6 +35,7 @@ public class UserApiController {
         return userDto;
     }
 
+    @CrossOrigin(origins = "*")
     @PatchMapping
     public void update(@Valid @RequestBody UserDto userDto, Authentication authentication) {
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();

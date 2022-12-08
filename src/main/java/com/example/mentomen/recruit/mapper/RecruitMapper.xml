@@ -25,6 +25,18 @@
     WHERE
       article_id = #{article_id};
   </select>
+  <select id="getRecruitByArticleIdAndUserId" resultType="com.example.mentomen.recruit.dao.RecruitDAO" resultMap="recruit">
+    SELECT
+      member_id,
+      article_id,
+      join_user_id
+    FROM
+    member
+    WHERE
+    1=1
+    AND  article_id = #{article_id}
+    AND  join_user_id = #{user_id};
+  </select>
   <insert id="saveRecruit">
     INSERT INTO 
     member

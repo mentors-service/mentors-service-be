@@ -1,6 +1,7 @@
 package com.example.mentomen.article.api;
 
 import com.example.mentomen.article.service.ArticleService;
+import com.example.mentomen.article.vo.ArticleListVO;
 import com.example.mentomen.article.vo.ArticleRetriveVO;
 import com.example.mentomen.article.vo.ArticleVO;
 import com.example.mentomen.member.config.auth.PrincipalDetails;
@@ -8,6 +9,9 @@ import com.example.mentomen.member.config.auth.PrincipalDetails;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,44 +28,24 @@ public class ArticleApiController {
 
   @CrossOrigin(origins = "*")
   @GetMapping
-  public ResponseEntity<List<ArticleVO>> getArticleList(
-      @RequestParam(name = "offset") Integer offset,
-      @RequestParam(name = "searchObj", required = false) String searchObj,
-      @RequestParam(name = "searchVal", required = false) String searchVal) {
-    return ResponseEntity.ok(
-        articleService.articles(
-            offset,
-            searchObj,
-            searchVal));
-  }
-
-  @CrossOrigin(origins = "*")
-  @GetMapping("/user")
-  public ResponseEntity<List<ArticleVO>> getArticleListByUser(
+  public ResponseEntity<ArticleListVO> getArticleList(
       @RequestParam(name = "offset") Integer offset,
       @RequestParam(name = "searchObj", required = false) String searchObj,
       @RequestParam(name = "searchVal", required = false) String searchVal,
       Authentication authentication) {
-    if ((PrincipalDetails) authentication.getPrincipal() != null) {
-      PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
-      return ResponseEntity.ok(
-          articleService.articlesByUserId(
-              offset,
-              searchObj,
-              searchVal, principal.getUser().getId()));
-    } else {
-      return ResponseEntity.ok(
-          articleService.articles(
-              offset,
-              searchObj,
-              searchVal));
-    }
+    PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
+    return ResponseEntity.ok(
+        articleService.articles(
+            offset,
+            searchObj,
+            searchVal, principal.getUser().getId()));
   }
 
   @CrossOrigin(origins = "*")
   @GetMapping("/{id}")
-  public ResponseEntity<ArticleVO> getArticle(@PathVariable Integer id) {
-    return ResponseEntity.ok(articleService.findById(id));
+  public ResponseEntity<ArticleVO> getArticle(@PathVariable Integer id, Authentication authentication) {
+    PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
+    return ResponseEntity.ok(articleService.findById(id, principal.getUser().getId()));
   }
 
   @CrossOrigin(origins = "*")

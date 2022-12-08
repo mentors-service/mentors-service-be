@@ -8,11 +8,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class UserDto {
+    private Long id;
     private String nickname;
-    private String discription;
+    private String description;
 
     public UserDto(UserEntity user) {
+        this.id = user.getId();
         this.nickname = user.getNickname();
-        this.discription = user.getDiscription();
+        this.description = user.getDescription();
     }
 }

@@ -27,7 +27,7 @@ public class UserService {
 
         UserEntity user = userRepository.findByEmail(email);
 
-        user.update(userDto.getNickname(), userDto.getDiscription());
+        user.update(userDto.getNickname(), userDto.getDescription());
     }
 
     @Transactional(readOnly = true)

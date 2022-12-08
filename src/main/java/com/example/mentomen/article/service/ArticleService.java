@@ -3,6 +3,7 @@ package com.example.mentomen.article.service;
 import com.example.mentomen.article.code.ArticleStatusCode;
 import com.example.mentomen.article.dao.ArticleDAO;
 import com.example.mentomen.article.mapper.ArticleMapper;
+import com.example.mentomen.article.vo.ArticleListVO;
 import com.example.mentomen.article.vo.ArticleRetriveVO;
 import com.example.mentomen.article.vo.ArticleVO;
 import com.example.mentomen.comment.service.CommentService;
@@ -49,15 +50,17 @@ public class ArticleService {
         searchVal,
         userId);
     for (ArticleDAO rawArticle : rawArticleList) {
-      articleList.add(articleVOBuilderFromDto(rawArticle));
+      articleList.add(articleVOBuilderFromDto(rawArticle, userId));
     }
     return articleList;
   }
 
-  public List<ArticleVO> articles(
+  // no Auth Article List -> TODO
+  public ArticleListVO articles(
       Integer offset,
       String searchObj,
-      String searchVal) {
+      String searchVal,
+      Long userId) {
     List<ArticleVO> articleList = new ArrayList<>();
     List<ArticleDAO> rawArticleList = articleMapper.getArticleList(
         offset,
@@ -65,48 +68,48 @@ public class ArticleService {
         searchVal,
         null);
     for (ArticleDAO rawArticle : rawArticleList) {
-      articleList.add(articleVOBuilderFromDto(rawArticle));
+      articleList.add(articleVOBuilderFromDto(rawArticle, userId));
     }
-    return articleList;
+    // TODO : pagenation invaild처리 if current > totalpage 에러처리해야함.
+    return ArticleListVO.builder().data(articleList).currentPage(offset)
+        .totalPages(Integer.valueOf(articleMapper.getArticleTotalCnt()) / 10).build();
   }
 
   @Transactional(readOnly = true)
-  public ArticleVO findById(Integer id) {
+  public ArticleVO findById(Integer id, Long userId) {
     ArticleDAO rawArticle = articleMapper.getArticle(id);
-    return articleVOBuilderFromDto(rawArticle);
+    return articleVOBuilderFromDto(rawArticle, userId);
   }
 
   // TODO Article Status Change
   public Integer update(Integer id, ArticleRetriveVO article, Long createrId) {
     return articleMapper.updateArticle(id, article.getTitle(), article.getPlace(), article.getStartDate(),
-        article.getEndDate(), article.getContents(), ArticleStatusCode.ARTICLE_INPROGRESS.getCode(),
-        article.getTotalMember(), createrId);
+        article.getEndDate(), article.getContents(),
+        article.getTotalRecruit(), createrId);
   }
 
   public Integer save(ArticleRetriveVO articleVO, Long createrId) {
     // TODO Extract UserID from token
     return articleMapper.saveArticle(articleVO.getTitle(), articleVO.getPlace(), articleVO.getStartDate(),
         articleVO.getEndDate(), articleVO.getContents(), ArticleStatusCode.ARTICLE_INPROGRESS.getCode(),
-        articleVO.getTotalMember(), createrId);
+        articleVO.getTotalRecruit(), createrId);
   }
 
   public Integer delete(Integer id, Long createrId) {
     return articleMapper.deleteArticle(id, createrId);
   }
 
-  private ArticleVO articleVOBuilderFromDto(ArticleDAO rawArticle) {
+  private ArticleVO articleVOBuilderFromDto(ArticleDAO rawArticle, Long userId) {
     UserDto rawUser = userService.findById(rawArticle.getCreatorId());
-    // UserDto creater =
-    // UserDto.builder().name(rawUser.getUsername()).email(rawUser.getEmail())
-    // .picture(rawUser.getPicture()).build();
     return ArticleVO.builder().articleId(rawArticle.getArticleId())
         .createdAt(rawArticle.getCreatedAt())
         .modifiedAt(rawArticle.getModifiedAt()).title(rawArticle.getTitle()).place(rawArticle.getPlace())
         .startDate(rawArticle.getStartDate()).endDate(rawArticle.getEndDate()).contents(rawArticle.getContents())
         .creater(rawUser).status(ArticleStatusCode.parseCode(rawArticle.getStatus()))
         .comments(commentService.comments(rawArticle.getArticleId(), null))
-        .recruit(recruitService.recruitMemberBuilder(rawArticle.getArticleId(), rawArticle.getCreatorId()))
-        .scraps(scrapService.scrapBuilderByArticle(rawArticle.getArticleId(), rawArticle.getCreatorId()))
+        .recruit(recruitService.recruitMemberBuilder(rawArticle.getArticleId(), userId))
+        .totalRecruit(rawArticle.getTotalRecruit())
+        .scraps(scrapService.scrapBuilderByArticle(rawArticle.getArticleId(), userId))
         .commentCnt(commentService.getCommentCntByArticleId(rawArticle.getArticleId()))
         .build();
   }

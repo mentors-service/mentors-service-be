@@ -35,7 +35,7 @@
         AND #{searchObj} = #{searchVal}
       </if>
     ORDER BY
-      created_at
+      created_at DESC
     LIMIT 10 
     OFFSET (#{offset}-1)*10
   </select>
@@ -56,6 +56,12 @@
       article
     WHERE
       article_id = #{articleId}
+  </select>
+  <select id="getArticleTotalCnt" resultType="String">
+    SELECT 
+      count(*)
+    FROM
+      article
   </select>
   <insert id="saveArticle">
     INSERT INTO 
@@ -83,7 +89,7 @@
         #{userId}, 
         now(),
         #{status},
-        #{totalMember}
+        #{totalRecruit}
         )
     </insert>
   <update id="updateArticle">
@@ -95,12 +101,19 @@
     start_date=#{startDate, jdbcType=VARCHAR},
     end_date=#{endDate, jdbcType=VARCHAR},
     modified_at=now(),
-    status=#{status},
-    total_recruit=#{totalMember}
+    total_recruit=#{totalRecruit}
     WHERE 
     1=1
     AND article_id=#{articleId}
     AND creator_id=#{createrId};
+  </update>
+  <update id="updateArticleStatus">
+    UPDATE article
+    SET
+    status=#{status},
+    WHERE 
+    1=1
+    AND article_id=#{articleId}
   </update>
   <delete id="deleteArticle">
     DELETE FROM article

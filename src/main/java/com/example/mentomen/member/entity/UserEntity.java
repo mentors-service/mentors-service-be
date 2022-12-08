@@ -33,7 +33,7 @@ public class UserEntity {
 
     @NotBlank
     private String nickname;
-    private String discription;
+    private String description;
 
     @Builder
     public UserEntity(String username, String password, String email, String role, String provider, String providerId,
@@ -46,12 +46,12 @@ public class UserEntity {
         this.providerId = providerId;
         this.createDate = createDate;
         this.nickname = username;
-        this.discription = null;
+        this.description = null;
     }
 
-    public void update(String nickname, String discription) {
+    public void update(String nickname, String description) {
         this.nickname = nickname;
-        if (discription != null)
-            this.discription = discription;
+        if (description != null)
+            this.description = description;
     }
 }

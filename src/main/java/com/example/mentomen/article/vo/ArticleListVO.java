@@ -9,9 +9,7 @@ import lombok.Singular;
 @Getter
 @Builder
 public class ArticleListVO {
-    private Integer page;
-    private Integer perPage;
-    private Integer total;
+    private Integer currentPage;
     private Integer totalPages;
 
     @Singular("article")

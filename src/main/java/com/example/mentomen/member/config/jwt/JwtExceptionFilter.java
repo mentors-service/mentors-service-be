@@ -18,7 +18,6 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
             throws ServletException, IOException {
-        System.out.println("JwtExceptionFilter탑승");
         try {
             chain.doFilter(req, res); // go to 'JwtAuthenticationFilter'
         } catch (JwtException ex) {

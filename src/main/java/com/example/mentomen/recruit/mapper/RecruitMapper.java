@@ -14,6 +14,9 @@ public interface RecruitMapper {
 
     List<RecruitDAO> getRecruitByArticleId(@Param("article_id") Integer articleId);
 
+    List<RecruitDAO> getRecruitByArticleIdAndUserId(@Param("article_id") Integer articleId,
+            @Param("user_id") Long userId);
+
     int saveRecruit(@Param("user_id") Long userId, @Param("article_id") Integer articleId);
 
     int deleteRecruit(@Param("user_id") Long userId, @Param("article_id") Integer articleId);
