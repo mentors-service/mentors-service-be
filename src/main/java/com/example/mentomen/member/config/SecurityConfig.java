@@ -61,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             http.addFilter(new JwtCommonAuthorizationFilter(authenticationManager(), tokenProvider, userRepository));
             http.addFilterBefore(jwtExceptionFilter, JwtCommonAuthorizationFilter.class);
             http.authorizeRequests()
-                    .antMatchers("/api/users/**").access("hasRole('ROLE_USER')")
+                    // .antMatchers("/api/users/**").access("hasRole('ROLE_USER')")
                     .antMatchers("/h2-console/**").permitAll()
                     .anyRequest().permitAll()
                     .and()

@@ -63,6 +63,12 @@ public class ArticleApiController {
   }
 
   @CrossOrigin(origins = "*")
+  @GetMapping("/detail/{id}")
+  public ResponseEntity<ArticleVO> getArticleNoAuth(@PathVariable Integer id) {
+    return ResponseEntity.ok(articleService.findById(id, null));
+  }
+
+  @CrossOrigin(origins = "*")
   @PostMapping
   public ResponseEntity<String> saveArticle(@RequestBody ArticleRetriveVO article, Authentication authentication) {
     PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();

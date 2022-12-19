@@ -40,11 +40,10 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-
         String path = (request).getRequestURI();
+        log.info("url = {}", path);
         String method = (request).getMethod();
-        if ((path.contains("/articles/list") && method.equals("GET")) ||
-                (path.contains("/users/*") && method.equals("GET"))) {
+        if (checkNoAuthUrl(path, method)) {
             chain.doFilter(request, response);
         } else {
             try {
@@ -98,5 +97,19 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
             }
         }
         return null;
+    }
+
+    private Boolean checkNoAuthUrl(String path, String method) {
+        if ((path.contains("/articles/list") && method.equals("GET"))) {
+            return true;
+        } else if ((path.contains("/articles/detail") && method.equals("GET"))) {
+            return true;
+        } else if (path.split("/")[2].contains("users")) {
+            if (path.split("/").length > 3 && method.equals("GET")) {
+                return true;
+            } else
+                return false;
+        } else
+            return false;
     }
 }
