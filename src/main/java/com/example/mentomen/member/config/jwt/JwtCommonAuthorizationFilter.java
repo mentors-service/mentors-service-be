@@ -31,7 +31,7 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
     private JwtTokenProvider jwtTokenProvider;
 
     public JwtCommonAuthorizationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider,
-            UserRepository userRepository) {
+                                        UserRepository userRepository) {
         super(authenticationManager);
         this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
@@ -41,31 +41,38 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        try {
-            String token = request.getHeader("Authorization")
-                    .replace("Bearer ", "");
-            String email = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
-                    .getClaim("email").asString();
-        } catch (NullPointerException e) {
-            log.info("nullPoint");
-            throw new JwtException("토큰 null");
-        } catch (SignatureVerificationException e) {
-            log.info("Invalid JWT signature.");
-            throw new JwtException("잘못된 JWT 시그니처");
-        } catch (JWTDecodeException e) {
-            log.info("Invalid JWT token.");
-            throw new JwtException("유효하지 않은 JWT 토큰");
-        } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token.");
-            throw new JwtException("토큰 기한 만료");
-        } catch (IllegalArgumentException e) {
-            log.info("JWT token compact of handler are invalid.");
-            throw new JwtException("JWT token compact of handler are invalid.");
+        String path = (request).getRequestURI();
+        String method = (request).getMethod();
+        if ((path.contains("/articles") && method.equals("GET"))) {
+            chain.doFilter(request, response);
+        } else {
+            try {
+                String token = request.getHeader("Authorization")
+                        .replace("Bearer ", "");
+                String email = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
+                        .getClaim("email").asString();
+            } catch (NullPointerException e) {
+                log.info("nullPoint");
+                throw new JwtException("토큰 null");
+            } catch (SignatureVerificationException e) {
+                log.info("Invalid JWT signature.");
+                throw new JwtException("잘못된 JWT 시그니처");
+            } catch (JWTDecodeException e) {
+                log.info("Invalid JWT token.");
+                throw new JwtException("유효하지 않은 JWT 토큰");
+            } catch (ExpiredJwtException e) {
+                log.info("Expired JWT token.");
+                throw new JwtException("토큰 기한 만료");
+            } catch (IllegalArgumentException e) {
+                log.info("JWT token compact of handler are invalid.");
+                throw new JwtException("JWT token compact of handler are invalid.");
+            }
+
+            Authentication authentication = getUsernamePasswordAuthentication(request);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            chain.doFilter(request, response);
         }
 
-        Authentication authentication = getUsernamePasswordAuthentication(request);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        chain.doFilter(request, response);
     }
 
     private Authentication getUsernamePasswordAuthentication(HttpServletRequest request) {
