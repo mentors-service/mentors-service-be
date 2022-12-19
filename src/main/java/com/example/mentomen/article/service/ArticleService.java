@@ -38,7 +38,7 @@ public class ArticleService {
   private ScrapService scrapService;
 
   @Transactional(readOnly = true)
-  public List<ArticleVO> articlesByUserId(
+  public ArticleListVO articlesByUserId(
       Integer offset,
       String searchObj,
       String searchVal,
@@ -52,7 +52,8 @@ public class ArticleService {
     for (ArticleDAO rawArticle : rawArticleList) {
       articleList.add(articleVOBuilderFromDto(rawArticle, userId));
     }
-    return articleList;
+    return ArticleListVO.builder().data(articleList).currentPage(offset)
+        .totalPages(Integer.valueOf(articleMapper.getArticleTotalCnt()) / 10).build();
   }
 
   // no Auth Article List -> TODO

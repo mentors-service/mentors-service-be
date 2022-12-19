@@ -31,7 +31,7 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
     private JwtTokenProvider jwtTokenProvider;
 
     public JwtCommonAuthorizationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider,
-                                        UserRepository userRepository) {
+            UserRepository userRepository) {
         super(authenticationManager);
         this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
@@ -43,7 +43,8 @@ public class JwtCommonAuthorizationFilter extends BasicAuthenticationFilter {
 
         String path = (request).getRequestURI();
         String method = (request).getMethod();
-        if ((path.contains("/articles") && method.equals("GET"))) {
+        if ((path.contains("/articles/list") && method.equals("GET")) ||
+                (path.contains("/users/*") && method.equals("GET"))) {
             chain.doFilter(request, response);
         } else {
             try {

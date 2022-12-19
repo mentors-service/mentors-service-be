@@ -35,10 +35,24 @@ public class ArticleApiController {
       Authentication authentication) {
     PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
     return ResponseEntity.ok(
-        articleService.articles(
+        articleService.articlesByUserId(
             offset,
             searchObj,
             searchVal, principal.getUser().getId()));
+  }
+
+  @CrossOrigin(origins = "*")
+
+  @GetMapping("/list")
+  public ResponseEntity<ArticleListVO> getArticleListNoAuth(
+      @RequestParam(name = "offset") Integer offset,
+      @RequestParam(name = "searchObj", required = false) String searchObj,
+      @RequestParam(name = "searchVal", required = false) String searchVal) {
+    return ResponseEntity.ok(
+        articleService.articles(
+            offset,
+            searchObj,
+            searchVal, null));
   }
 
   @CrossOrigin(origins = "*")

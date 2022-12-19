@@ -11,6 +11,8 @@ import com.example.mentomen.comment.dao.CommentDAO;
 public interface CommentMapper {
         List<CommentDAO> getCommentList(@Param("article_id") Integer articleId, @Param("user_id") Long userId);
 
+        List<CommentDAO> getCommentListByUserId(@Param("user_id") Long userId);
+
         List<CommentDAO> getCommentChildList(@Param("parent_id") Integer parentId);
 
         int updateComment(@Param("comment_id") Integer commentId,

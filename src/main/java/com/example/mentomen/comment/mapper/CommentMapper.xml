@@ -30,6 +30,24 @@
       </if>
     ;
   </select>
+  <select id="getCommentListByUserId" resultType="com.example.mentomen.comment.dao.CommentDAO" resultMap="comment">
+    SELECT
+      comment_id,
+      article_id,
+      creator_id,
+      parent_id,
+      contents,
+      created_at,
+      modified_at
+    FROM
+      comment
+    WHERE
+      1=1
+    <if test="user_id != null">
+        AND creator_id = #{user_id}
+      </if>
+    ;
+  </select>
   <select id="getCommentChildList" resultType="com.example.mentomen.comment.dao.CommentDAO" resultMap="comment">
     SELECT
       comment_id,

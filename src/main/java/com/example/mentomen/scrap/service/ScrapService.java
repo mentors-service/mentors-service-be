@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.mentomen.article.service.ArticleService;
+import com.example.mentomen.article.vo.ArticleVO;
 import com.example.mentomen.scrap.dao.ScrapDAO;
 import com.example.mentomen.scrap.mapper.ScrapMapper;
 import com.example.mentomen.scrap.vo.ScrapVO;
@@ -15,6 +17,9 @@ public class ScrapService {
 
     @Autowired
     private ScrapMapper scrapMapper;
+
+    @Autowired
+    private ArticleService articleService;
 
     // TODO Update Error Exception
     public String updateScrapStatus(Integer articleId, Long userId) {
@@ -47,5 +52,13 @@ public class ScrapService {
         return ScrapVO.builder().articleId(articleId).isScraped(isScraped)
                 .createrIdList(createrIdList).scrapCnt(rawScrapList.size()).build();
     }
-    // TODO GET Article By userID
+
+    public List<ArticleVO> getScrapArticlesByUserId(Long userId) {
+        List<ArticleVO> articles = new ArrayList<>();
+        List<ScrapDAO> rawScrapList = scrapMapper.getScrapByUserId(userId);
+        for (ScrapDAO scrap : rawScrapList) {
+            articles.add(articleService.findById(scrap.getArticleId(), userId));
+        }
+        return articles;
+    }
 }

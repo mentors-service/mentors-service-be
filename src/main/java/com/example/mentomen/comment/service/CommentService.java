@@ -41,6 +41,20 @@ public class CommentService {
     return comments;
   }
 
+  @Transactional(readOnly = true)
+  public List<CommentVO> getCommentsByUserId(
+      Long userId) {
+    List<CommentVO> comments = new ArrayList<>();
+    List<CommentDAO> rawCommentDAOs = commentMapper.getCommentListByUserId(userId);
+    for (CommentDAO rawCommentDAO : rawCommentDAOs) {
+      if (rawCommentDAO.getParentId() == null) {
+        CommentVO parentComment = getParentComment(rawCommentDAO);
+        comments.add(parentComment);
+      }
+    }
+    return comments;
+  }
+
   public Integer update(Integer commentId, Integer childId, CommentRetriveVO comment, Long createrId) {
     return commentMapper.updateComment(commentId, comment.getContents(), createrId);
   }
