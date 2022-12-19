@@ -96,7 +96,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private String makeRedirectUrl(String token) {
-        return UriComponentsBuilder.fromUriString("http://" + redirectUrl + "/oauth2/kakao?token=" + token)
+        return UriComponentsBuilder.fromUriString(redirectUrl + "/oauth2/kakao?token=" + token)
                 .build().toUriString();
     }
 }

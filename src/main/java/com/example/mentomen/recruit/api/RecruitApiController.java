@@ -29,6 +29,7 @@ public class RecruitApiController {
             return ResponseEntity.ok(recruitService.updateRecruitStatus(articleId, principal.getUser().getId()));
 
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body("Required Auth Token");
         }
     }
