@@ -15,6 +15,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true); // 내 서버가 응답할때 자바스크립트에서 가능하게
+        config.addAllowedOrigin("https://mentorservice.pages.dev"); // 모든 ip에서 허용
         config.addAllowedOrigin("http://localhost:3000"); // 모든 ip에서 허용
         config.addAllowedHeader("*"); // 모든헤더응답 허용
         config.addAllowedMethod("*");// put등등
